@@ -8,32 +8,45 @@
 :root{--bg:#fff;--fg:#111;--mut:#5f6368;--line:#dadce0;--card:#f6f7f9;--ok:#137333;--okbg:#e6f4ea;--bad:#b3261e;--badbg:#fce8e6;--acc:#111;--acc2:#1a73e8;--warn:#8a5a00;--warnbg:#fff7e0;--notebg:#eef4ff}
 @media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#eee;--mut:#a0a4a8;--line:#333;--card:#1c1c1e;--ok:#81c995;--okbg:#14301d;--bad:#f28b82;--badbg:#3a1b19;--acc:#eee;--acc2:#8ab4f8;--warn:#fdd663;--warnbg:#2d2717;--notebg:#17202f}}
 *{box-sizing:border-box}
+html{scroll-behavior:smooth}
 body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
-body > header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--line);padding:9px 16px;box-shadow:0 1px 0 rgba(0,0,0,.03)}
-.nptel-theory-card{border:1px solid var(--line);border-radius:11px;margin:0 0 16px;background:var(--bg);overflow:hidden}
-.nptel-theory-head{position:static;z-index:auto;padding:12px 16px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:none}
+body > header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:10px 20px;box-shadow:0 4px 20px -2px rgba(0,0,0,.04);transition:background .2s}
+@media (prefers-color-scheme:dark){body > header{background:rgba(18,18,18,.86);box-shadow:0 4px 20px -2px rgba(0,0,0,.4)}}
+.nptel-theory-card{border:1px solid var(--line);border-radius:12px;margin:0 0 16px;background:var(--bg);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.nptel-theory-head{position:static;z-index:auto;padding:12px 18px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:none}
 .nptel-theory-head h3{margin:4px 0 0;font-size:1.05rem;line-height:1.4}
-.nptel-theory-body{padding:14px 16px}
-.nptel-theory-body h4{font-size:.95rem;margin:12px 0 4px;color:var(--fg)}
-.nptel-theory-body p{margin:0 0 10px;font-size:.94rem}
-.nptel-theory-actions{margin-top:14px;border-top:1px solid var(--line);padding-top:10px;display:flex;justify-content:flex-end}
+.nptel-theory-body{padding:16px 18px}
+.nptel-theory-body h4{font-size:.92rem;text-transform:uppercase;letter-spacing:.04em;margin:12px 0 4px;color:var(--mut)}
+.nptel-theory-body p{margin:0 0 12px;font-size:.95rem;line-height:1.6}
+.nptel-theory-actions{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:flex-end}
+.nptel-btn-practice{background:var(--acc2)!important;color:#fff!important;border-color:var(--acc2)!important;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease}
+.nptel-btn-practice:hover{opacity:.92;transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,115,232,.25)}
 .toolbar{margin:0 0 14px}
 .nptel-read-theory{font-size:.82rem;padding:3px 8px;border:1px solid var(--acc2);background:transparent;color:var(--acc2);border-radius:6px;cursor:pointer}
 .nptel-read-theory:hover{background:var(--card)}
 .theory-highlight{background:var(--warnbg)!important;border-radius:4px;padding:2px 4px}
-.bar{max-width:960px;margin:0 auto;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
-h1{font-size:1.05rem;margin:0 auto 0 0;white-space:nowrap}
-select,input[type=search],button{font:inherit;font-size:.9rem;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--fg)}
+.q-target-pulse{box-shadow:0 0 0 3px var(--acc2)!important;animation:pulseBorder 1.5s ease-out}
+@keyframes pulseBorder{0%{box-shadow:0 0 0 4px var(--acc2)}70%{box-shadow:0 0 0 1px var(--acc2)}100%{box-shadow:none}}
+.bar{max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+h1{font-size:1.08rem;font-weight:750;letter-spacing:-.015em;margin:0 auto 0 0;white-space:nowrap;display:inline-flex;align-items:center;gap:6px}
+select,input[type=search],button{font:inherit;font-size:.88rem;padding:7px 12px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--fg);transition:border-color .15s,box-shadow .15s,background .15s}
+select{cursor:pointer;padding-right:24px}
 button{cursor:pointer}button:hover{background:var(--card)}
 button:focus-visible,select:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:2px solid var(--acc2);outline-offset:2px}
-input[type=search]{min-width:150px;flex:1}
-main{max-width:960px;margin:0 auto;padding:16px}
-.stats{color:var(--mut);font-size:.9rem;margin:2px 0 14px}
+input[type=search]{min-width:180px;flex:1}
+main{max-width:1120px;margin:0 auto;padding:20px;scroll-padding-top:150px}
+.nwt-card,.nptel-theory-card,.q,.chapter,.week-card,.hero{scroll-margin-top:150px}
+.theory-highlight{background:linear-gradient(transparent 62%,rgba(255,214,10,.32) 62%);border-left:3px solid #f5b700;padding:6px 10px;border-radius:6px;display:block;margin:8px 0;box-shadow:inset 0 0 0 1px rgba(245,183,0,.25);transition:background .3s ease}
+@media (prefers-color-scheme:dark){.theory-highlight{background:linear-gradient(transparent 62%,rgba(255,214,10,.18) 62%);border-left-color:#f5b700;box-shadow:inset 0 0 0 1px rgba(245,183,0,.35)}}
+.stats{color:var(--mut);font-size:.88rem;margin:2px 0 14px}
 h2{font-size:1.35rem;margin:8px 0 6px;border-bottom:2px solid var(--fg);padding-bottom:5px}
 h3{font-size:1.05rem;margin:24px 0 6px}
-.tabs{display:flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
-.tab{border:0;border-radius:0;padding:6px 13px;background:var(--bg)}
-.tab[aria-selected=true]{background:var(--fg);color:var(--bg);font-weight:700}
+.tabs,.segmented-tabs{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.tab{border:0;border-radius:7px;padding:6px 14px;background:transparent;color:var(--mut);font-weight:550;font-size:.87rem;transition:all .16s ease}
+.tab:hover{color:var(--fg);background:rgba(128,128,128,.08)}
+.tab[aria-selected=true]{background:var(--bg);color:var(--fg);font-weight:650;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.subtabs-pill{display:inline-flex;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+.subtabs-pill .tab[aria-selected=true]{background:var(--acc2);color:#fff;font-weight:650;box-shadow:0 2px 6px rgba(26,115,232,.3)}
 .primary{background:var(--fg);color:var(--bg);border-color:var(--fg);font-weight:650}
 .primary:hover{background:var(--fg);opacity:.9}
 .ghost{background:transparent}
@@ -111,17 +124,36 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 .q.done .ans,.show .ans{display:block}
 .empty{color:var(--mut);padding:30px 0;text-align:center}
 .muted{color:var(--mut)}
-@media (max-width:640px){
-  body > header{padding:8px 10px}
-  main{padding:12px}
-  h1{font-size:.98rem;width:100%;white-space:normal}
-  .bar{gap:6px}
-  .tabs{order:2}
-  #week{flex:1;min-width:130px}
-  #search{order:3;flex-basis:100%}
-  .hide-sm{display:none}
-  .hero{padding:14px}
-  .hero h2{font-size:1.28rem}
+@media (max-width: 680px){
+  body > header{padding:8px 10px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+  main{padding:10px 8px}
+  .bar{display:grid;grid-template-columns:1fr auto;gap:6px 6px;align-items:center}
+  h1{grid-column:1 / 2;font-size:.96rem;margin:0;line-height:1.2}
+  #reset{grid-column:2 / 3;padding:4px 8px;font-size:.78rem;height:28px}
+  #toggle{grid-column:1 / -1;padding:5px 8px;font-size:.8rem}
+  .tabs{grid-column:1 / -1;width:100%;display:flex;padding:2px;gap:2px}
+  .tabs .tab{flex:1;text-align:center;padding:5px 6px;font-size:.78rem;white-space:nowrap}
+  #week,#nptel-week{grid-column:1 / -1;width:100%;padding:6px 8px;font-size:.82rem}
+  #nptel-subtabs{grid-column:1 / -1;width:100%;display:flex!important;padding:2px;gap:2px}
+  #nptel-subtabs[style*="display: none"],#nptel-subtabs[style*="display:none"]{display:none!important}
+  #nptel-subtabs .tab{flex:1;text-align:center;padding:5px 4px;font-size:.78rem;white-space:nowrap}
+  #search{grid-column:1 / -1;width:100%;padding:6px 10px;font-size:.84rem}
+  .hero{padding:12px;border-radius:10px;margin-bottom:12px}
+  .hero h2{font-size:1.15rem}
+  .hero-row{flex-direction:column;align-items:flex-start}
+  .nptel-theory-card{border-radius:10px;margin-bottom:12px}
+  .nptel-theory-head{padding:10px 12px}
+  .nptel-theory-head h3{font-size:.95rem}
+  .nptel-theory-body{padding:10px 12px}
+  .nptel-theory-body p{font-size:.88rem;line-height:1.55}
+  .nptel-theory-actions{flex-direction:column;align-items:stretch;gap:6px}
+  .nptel-theory-actions button{width:100%;text-align:center;justify-content:center;padding:8px 10px;font-size:.84rem}
+  .topic-head{flex-direction:column;align-items:flex-start;gap:6px}
+  .topic-head p{font-size:.92rem}
+  .opt{padding:8px 10px;font-size:.87rem}
+  .chapter summary{padding:10px 12px;font-size:.9rem}
+  .chapter-body{padding:2px 12px 12px}
+  .stats{font-size:.8rem;margin-bottom:8px}
 }
 @media print{
   body > header,.cta,.read-btn,.tabs,.chapter-actions,.theory-link{display:none!important}
@@ -147,7 +179,7 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 </div>
 <select id="week" aria-label="Week"></select>
 <select id="nptel-week" aria-label="NPTEL Week" style="display:none"></select>
-<div id="nptel-subtabs" style="display:none;gap:6px;align-items:center">
+<div id="nptel-subtabs" class="subtabs-pill" style="display:none">
   <button class="tab" id="nptel-sub-theory" data-nptel-view="theory">NPTEL Theory</button>
   <button class="tab" id="nptel-sub-practice" data-nptel-view="practice">NPTEL MCQ Practice</button>
 </div>

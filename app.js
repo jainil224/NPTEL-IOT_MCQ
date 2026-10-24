@@ -333,10 +333,11 @@
               }
               return `<button class="opt${cls}" data-o="${oi}"><b>${"ABCD"[oi]}.</b><span>${esc(o)}</span></button>`;
             }).join("") +
-            `<div class="ans"><b>Correct Answer: ${"ABCD"[q.a]}</b> | <i>Reason: ${esc(q.w)}</i><br>${topicTheoryLink(wi, t.title)}</div></div>`;
+            `<div class="ans"><b>Correct Answer: ${"ABCD"[q.a]}</b> | <i>Reason: ${esc(q.w)}</i><br>${topicTheoryLink(wi, t.title, id)}</div></div>`;
         });
         if (th) {
-          wh += `<div class="topic-head"><h3>${esc(t.title)}</h3>${topicTheoryLink(wi, t.title)}</div>
+          const repQid = th ? (t.qs[0] ? (wi + "." + ti + ".0") : "") : "";
+          wh += `<div class="topic-head"><h3>${esc(t.title)}</h3>${topicTheoryLink(wi, t.title, repQid)}</div>
             <div class="idea"><b>Key idea:</b> ${esc(t.summary)}</div>` + th;
         }
       });
@@ -418,17 +419,17 @@
       items = items.filter(it => (it.questionText + " " + it.theory + " " + it.why).toLowerCase().includes(term));
     }
 
-    let html = `<div class="hero"><h2>NPTEL Week Assessment Theory – Week ${week.week}</h2><p class="sub">Read the theory first, then switch to <b>NPTEL MCQ Practice</b> to attempt questions.</p></div>`;
+    let html = `<div class="hero"><h2>NPTEL Week Assessment Theory – Week ${week.week}</h2><p class="sub">Study the concept notes below. When ready, click <b>Answer this MCQ →</b> or switch to <b>NPTEL MCQ Practice</b> to test yourself.</p></div>`;
     html += `<div class="toolbar"><button class="ghost" data-action="nptel-switch-practice">Go to NPTEL MCQ Practice →</button></div>`;
     items.forEach((it, idx) => {
-      html += `<section class="nptel-theory-card"><header class="nptel-theory-head"><div><span class="chip">Q${it.qnum}</span><h3>${esc(it.questionText)}</h3></div></header><div class="nptel-theory-body">`;
+      html += `<section class="nptel-theory-card" id="nptel-theory-${it.qid}"><header class="nptel-theory-head"><div><span class="chip">Q${it.qnum}</span><h3>${esc(it.questionText)}</h3></div></header><div class="nptel-theory-body">`;
       if (it.theory) {
-        html += `<h4>Easy Theory / Explanation</h4><p>${esc(it.theory).replace(/\n/g, "<br>")}</p>`;
+        html += `<h4>Concept Theory &amp; Explanation</h4><p>${esc(it.theory).replace(/\n/g, "<br>")}</p>`;
       }
-      if (it.why) {
-        html += `<h4>Why this option is correct</h4><p>${esc(it.why).replace(/\n/g, "<br>")}</p>`;
-      }
-      html += `<div class="nptel-theory-actions"><button class="primary" data-action="nptel-read-theory" data-qid="${it.qid}">Read theory in main Theory tab →</button></div></div></section>`;
+      html += `<div class="nptel-theory-actions">
+        <button class="ghost" data-action="nptel-read-theory" data-qid="${it.qid}" style="margin-right:auto">Full Textbook Theory →</button>
+        <button class="primary nptel-btn-practice" data-action="nptel-go-mcq" data-qid="${it.qid}">Answer this MCQ →</button>
+      </div></div></section>`;
     });
     out.innerHTML = html || '<div class="empty">No theory matches your search.</div>';
     out.classList.remove("show");
@@ -608,6 +609,27 @@
     const actionEl = e.target.closest("[data-action]");
     if (actionEl) {
       const action = actionEl.dataset.action;
+      if (action === "mcq-read-theory") {
+        const wi = Number(actionEl.dataset.week);
+        const qid = actionEl.dataset.qid || "";
+        const topicTitle = actionEl.dataset.topic || "";
+        const [twi, tti, tqi] = qid.split(".").map(Number);
+        const qObj = DATA[twi] && DATA[twi].topics[tti] ? DATA[twi].topics[tti].qs[tqi] : null;
+        const res = qObj ? findBestChapterForMCQ(wi, qObj, topicTitle) : { cid: null };
+        mode = "theory";
+        if (weekSel) weekSel.value = String(wi);
+        if (res.cid) {
+          openChapters.add(res.cid);
+          pendingChapter = res.cid;
+        }
+        setMode(mode);
+        render();
+        syncHash(res.cid || null);
+        saveUI();
+        try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch(e) { window.scrollTo(0,0); }
+        if (res.cid && qObj) highlightMCQParagraph(res.cid, qObj);
+        return;
+      }
       if (action === "nptel-switch-theory") {
         nptelView = "theory";
         saveUI();
@@ -622,6 +644,23 @@
         setMode("nptel");
         render();
         syncHash();
+        return;
+      }
+      if (action === "nptel-go-mcq") {
+        const qid = actionEl.dataset.qid;
+        nptelView = "practice";
+        saveUI();
+        setMode("nptel");
+        render();
+        syncHash();
+        setTimeout(() => {
+          const target = document.querySelector(`[data-id="${qid}"]`);
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "center" });
+            target.classList.add("q-target-pulse");
+            setTimeout(() => target.classList.remove("q-target-pulse"), 2000);
+          }
+        }, 80);
         return;
       }
       if (action === "nptel-read-theory") {
