@@ -6,15 +6,23 @@
   const MCQ_KEY = "iot-mcq-progress-v1";
   const THEORY_KEY = "iot-theory-progress-v1";
   const UI_KEY = "iot-ui-v2";
+  const NPTEL_KEY = "iot-nptel-assess-progress-v1";
   const THEORY = Array.isArray(window.THEORY) ? window.THEORY : [];
+  const NPTEL_ASSESS = Array.isArray(window.NPTEL_ASSESSMENT) ? window.NPTEL_ASSESSMENT.slice().sort((a,b)=>a.week-b.week) : [];
+  const NPTEL_THEORY = Array.isArray(window.NPTEL_THEORY) ? window.NPTEL_THEORY.slice().sort((a,b)=>a.week-b.week) : [];
 
   const weekSel = document.getElementById("week");
+  const nptelWeekSel = document.getElementById("nptel-week");
+  const nptelSubtabs = document.getElementById("nptel-subtabs");
+  const nptelSubTheory = document.getElementById("nptel-sub-theory");
+  const nptelSubPractice = document.getElementById("nptel-sub-practice");
   const out = document.getElementById("out");
   const search = document.getElementById("search");
   const stats = document.getElementById("stats");
   const toggleBtn = document.getElementById("toggle");
   const tabTheory = document.getElementById("tab-theory");
   const tabMcq = document.getElementById("tab-mcq");
+  const tabNptel = document.getElementById("tab-nptel");
 
   const loadJSON = (key, fallback) => {
     try {
@@ -30,8 +38,10 @@
 
   let prog = loadJSON(MCQ_KEY, {});
   let theoryProg = loadJSON(THEORY_KEY, {});
+  let nptelProg = loadJSON(NPTEL_KEY, {});
   const ui = loadJSON(UI_KEY, {});
-  let mode = ui.mode === "mcq" ? "mcq" : "theory";
+  let mode = ui.mode === "mcq" || ui.mode === "nptel" ? ui.mode : "theory";
+  let nptelView = ui.nptelView === "practice" ? "practice" : "theory";
   let showAll = false;
   let pendingChapter = null;
   let searchTimer = null;
@@ -44,18 +54,41 @@
 
   function saveUI() {
     saveJSON(UI_KEY, {
-      week: weekSel.value,
+      week: weekSel ? weekSel.value : "0",
       mode,
+      nptelView,
+      nptelWeek: nptelWeekSel ? nptelWeekSel.value : undefined,
       open: Array.from(openChapters),
     });
   }
 
+  function updateNptelSubtabs() {
+    if (!nptelSubtabs) return;
+    if (mode === "nptel") {
+      nptelSubtabs.style.display = "flex";
+      if (nptelSubTheory) nptelSubTheory.setAttribute("aria-selected", String(nptelView === "theory"));
+      if (nptelSubPractice) nptelSubPractice.setAttribute("aria-selected", String(nptelView === "practice"));
+    } else {
+      nptelSubtabs.style.display = "none";
+    }
+  }
+
   function setMode(next) {
     mode = next;
-    tabTheory.setAttribute("aria-selected", String(mode === "theory"));
-    tabMcq.setAttribute("aria-selected", String(mode === "mcq"));
-    toggleBtn.hidden = mode !== "mcq";
-    search.placeholder = mode === "theory" ? "Search theory…" : "Search questions…";
+    if (tabTheory) tabTheory.setAttribute("aria-selected", String(mode === "theory"));
+    if (tabMcq) tabMcq.setAttribute("aria-selected", String(mode === "mcq"));
+    if (tabNptel) tabNptel.setAttribute("aria-selected", String(mode === "nptel"));
+    toggleBtn.hidden = mode !== "mcq" && mode !== "nptel";
+    if (mode === "theory") search.placeholder = "Search theory…";
+    else if (mode === "mcq") search.placeholder = "Search questions…";
+    else if (mode === "nptel") search.placeholder = nptelView === "theory" ? "Search NPTEL theory…" : "Search assessment questions…";
+    if (nptelWeekSel) {
+      nptelWeekSel.style.display = mode === "nptel" ? "" : "none";
+    }
+    if (weekSel) {
+      weekSel.style.display = (mode === "theory" || mode === "mcq") ? "" : "none";
+    }
+    updateNptelSubtabs();
     saveUI();
   }
 
@@ -64,6 +97,10 @@
   }
 
   function hashFor(chapterId) {
+    if (mode === "nptel") {
+      const nw = nptelWeekSel ? nptelWeekSel.value : "1";
+      return `#/nptel/week/${nw}`;
+    }
     const w = weekSel.value === "all" ? "all" : String(Number(weekSel.value) + 1);
     return `#/week/${w}/${mode}${chapterId ? "/" + chapterId : ""}`;
   }
@@ -76,6 +113,8 @@
   }
 
   function readHash() {
+    const m1 = location.hash.match(/^#\/nptel\/week\/(\d+)/);
+    if (m1) return { mode: "nptel", nptelWeek: m1[1], chapter: null };
     const m = location.hash.match(/^#\/week\/(all|\d+)\/(theory|mcq)(?:\/([\w-]+))?/);
     if (!m) return null;
     return {
@@ -88,19 +127,33 @@
   /* ------------------------------------------------------------------ *
    * Week selector and initial state
    * ------------------------------------------------------------------ */
-  weekSel.innerHTML = '<option value="all">All weeks</option>' +
-    DATA.map((w, i) => {
-      const parts = w.title.split(" — ");
-      return `<option value="${i}">${esc(parts[0])} — ${esc(parts[1] || "")}</option>`;
-    }).join("");
+  if (weekSel) {
+    weekSel.innerHTML = '<option value="all">All weeks</option>' +
+      DATA.map((w, i) => {
+        const parts = w.title.split(" — ");
+        return `<option value="${i}">${esc(parts[0])} — ${esc(parts[1] || "")}</option>`;
+      }).join("");
+  }
+
+  if (nptelWeekSel && NPTEL_ASSESS.length) {
+    nptelWeekSel.innerHTML = NPTEL_ASSESS.map(w => `<option value="${w.week}">Week ${w.week}</option>`).join("");
+  } else if (nptelWeekSel) {
+    nptelWeekSel.innerHTML = '<option value="1">Week 1</option>';
+  }
 
   const initialHash = readHash();
   if (initialHash) {
-    weekSel.value = initialHash.week;
-    mode = initialHash.mode;
-    pendingChapter = initialHash.chapter;
+    if (initialHash.mode === "nptel") {
+      mode = "nptel";
+      if (nptelWeekSel && initialHash.nptelWeek) nptelWeekSel.value = initialHash.nptelWeek;
+    } else {
+      if (weekSel) weekSel.value = initialHash.week;
+      mode = initialHash.mode;
+      pendingChapter = initialHash.chapter;
+    }
   } else {
-    weekSel.value = ui.week && (ui.week === "all" || DATA[ui.week]) ? ui.week : "0";
+    if (weekSel) weekSel.value = ui.week && (ui.week === "all" || DATA[ui.week]) ? ui.week : "0";
+    if (nptelWeekSel && ui.nptelWeek) nptelWeekSel.value = ui.nptelWeek;
   }
   setMode(mode);
 
@@ -318,17 +371,21 @@
       (attempted ? ` · ${Math.round((100 * correct) / attempted)}% correct` : "");
 
     if (mode === "theory") {
-      if (weekSel.value === "all") {
+      if (weekSel && weekSel.value === "all") {
         stats.textContent = `Theory: ${read}/${totalChapters} chapters read · ${mcqBit}`;
-      } else {
+      } else if (weekSel) {
         const w = THEORY[Number(weekSel.value)];
         stats.textContent = w
           ? `Theory: ${readCount(w)}/${w.chapters.length} chapters read in Week ${w.week} · ${mcqBit}`
           : mcqBit;
+      } else {
+        stats.textContent = mcqBit;
       }
-    } else {
-      stats.textContent = `${shown} question${shown === 1 ? "" : "s"} shown of ${TOTAL} · Attempted ${attempted} · Correct ${correct}` +
+    } else if (mode === "mcq") {
+      stats.textContent = `${shown || 0} question${(shown || 0) === 1 ? "" : "s"} shown of ${TOTAL} · Attempted ${attempted} · Correct ${correct}` +
         (attempted ? ` (${Math.round((100 * correct) / attempted)}%)` : "");
+    } else if (mode === "nptel") {
+      updateStatsNptel(shown || 0);
     }
   }
 
@@ -346,13 +403,110 @@
   /* ------------------------------------------------------------------ *
    * Main render / navigation
    * ------------------------------------------------------------------ */
+  function renderNptelTheory(term) {
+    if (!NPTEL_THEORY.length) {
+      out.innerHTML = '<div class="empty">No NPTEL theory found. Run <code>node scripts/build-nptel-theory.mjs</code> after adding week files.</div>';
+      stats.textContent = "NPTEL Week Assessment – Theory";
+      return;
+    }
+    const nw = nptelWeekSel ? Number(nptelWeekSel.value) : NPTEL_THEORY[0].week;
+    const week = NPTEL_THEORY.find(w => w.week === nw) || NPTEL_THEORY[0];
+    if (nptelWeekSel && nptelWeekSel.value != week.week) nptelWeekSel.value = week.week;
+
+    let items = week.items;
+    if (term) {
+      items = items.filter(it => (it.questionText + " " + it.theory + " " + it.why).toLowerCase().includes(term));
+    }
+
+    let html = `<div class="hero"><h2>NPTEL Week Assessment Theory – Week ${week.week}</h2><p class="sub">Read the theory first, then switch to <b>NPTEL MCQ Practice</b> to attempt questions.</p></div>`;
+    html += `<div class="toolbar"><button class="ghost" data-action="nptel-switch-practice">Go to NPTEL MCQ Practice →</button></div>`;
+    items.forEach((it, idx) => {
+      html += `<section class="nptel-theory-card"><header class="nptel-theory-head"><div><span class="chip">Q${it.qnum}</span><h3>${esc(it.questionText)}</h3></div></header><div class="nptel-theory-body">`;
+      if (it.theory) {
+        html += `<h4>Easy Theory / Explanation</h4><p>${esc(it.theory).replace(/\n/g, "<br>")}</p>`;
+      }
+      if (it.why) {
+        html += `<h4>Why this option is correct</h4><p>${esc(it.why).replace(/\n/g, "<br>")}</p>`;
+      }
+      html += `<div class="nptel-theory-actions"><button class="primary" data-action="nptel-read-theory" data-qid="${it.qid}">Read theory in main Theory tab →</button></div></div></section>`;
+    });
+    out.innerHTML = html || '<div class="empty">No theory matches your search.</div>';
+    out.classList.remove("show");
+    stats.textContent = `NPTEL Week ${week.week} Theory – ${items.length} / ${week.items.length} items`;
+  }
+
+  function renderNptelPractice(term) {
+    if (!NPTEL_ASSESS.length) {
+      out.innerHTML = '<div class="empty">No NPTEL assessment files found. Add week 1.md and run the build script.</div>';
+      updateStatsNptel(0);
+      return;
+    }
+    const nw = nptelWeekSel ? Number(nptelWeekSel.value) : NPTEL_ASSESS[0].week;
+    const week = NPTEL_ASSESS.find(w => w.week === nw) || NPTEL_ASSESS[0];
+    if (nptelWeekSel && nptelWeekSel.value != week.week) nptelWeekSel.value = week.week;
+
+    let questions = week.questions;
+    if (term) {
+      questions = questions.filter(q => (q.q + " " + q.options.join(" ") + " " + q.explanation).toLowerCase().includes(term));
+    }
+
+    let html = `<div class="hero"><h2>NPTEL Week Assessment MCQ Practice – Week ${week.week}</h2><p class="sub">Attempt questions. Use <b>Read theory</b> to jump to the exact explanation in the main Theory tab.</p></div>`;
+    html += `<div class="toolbar"><button class="ghost" data-action="nptel-switch-theory">← Back to NPTEL Theory</button></div>`;
+    let shown = 0;
+    questions.forEach((q) => {
+      shown++;
+      const id = q.id;
+      const chosen = nptelProg[id];
+      const done = chosen !== undefined;
+      const isMulti = Array.isArray(q.answer);
+      const correctArr = isMulti ? q.answer : [q.answer];
+      html += `<div class="q${done ? " done" : ""}" data-id="${id}" data-nptel="1"><div class="topic-head"><p style="margin:0;font-weight:700">Q${q.qnum}. ${esc(q.q)}</p><button class="nptel-read-theory" data-action="nptel-read-theory" data-qid="${id}">Read theory</button></div>`;
+      q.options.forEach((o, oi) => {
+        let cls = "";
+        if (done || showAll) {
+          if (correctArr.includes(oi)) cls = " right";
+          else if (done && (Array.isArray(chosen) ? chosen.includes(oi) : oi === chosen)) cls = " wrong";
+        }
+        html += `<button class="opt${cls}" data-o="${oi}"><b>${"ABCD"[oi]}.</b><span>${esc(o)}</span></button>`;
+      });
+      html += `<div class="ans"><b>Correct Answer: ${correctArr.map(i => "ABCD"[i]).join(", ")}</b></div></div>`;
+    });
+    out.innerHTML = html || '<div class="empty">No questions match your search.</div>';
+    out.classList.toggle("show", showAll);
+    updateStatsNptel(shown);
+  }
+
+  function renderNptel(term) {
+    if (nptelView === "theory") renderNptelTheory(term);
+    else renderNptelPractice(term);
+  }
+
+  function updateStatsNptel(shown) {
+    if (!NPTEL_ASSESS.length) { stats.textContent = "NPTEL Week Assessment – no data"; return; }
+    const nw = nptelWeekSel ? Number(nptelWeekSel.value) : NPTEL_ASSESS[0].week;
+    const week = NPTEL_ASSESS.find(w => w.week === nw) || NPTEL_ASSESS[0];
+    let attempted = 0, correct = 0;
+    week.questions.forEach(q => {
+      const c = nptelProg[q.id];
+      if (c !== undefined) {
+        attempted++;
+        const correctArr = Array.isArray(q.answer) ? q.answer : [q.answer];
+        const chosenArr = Array.isArray(c) ? c : [c];
+        const ok = correctArr.length === chosenArr.length && correctArr.every(x => chosenArr.includes(x));
+        if (ok) correct++;
+      }
+    });
+    stats.textContent = `NPTEL Week ${week.week} Assessment – ${shown} shown / ${week.questions.length} • Attempted ${attempted} • Correct ${correct}` + (attempted ? ` (${Math.round(100*correct/attempted)}%)` : "");
+  }
+
   function render() {
-    const wsel = weekSel.value;
+    const wsel = weekSel ? weekSel.value : "0";
     const term = search.value.trim().toLowerCase();
     if (mode === "theory") renderTheory(wsel, term);
-    else renderMCQ(wsel, term);
+    else if (mode === "mcq") renderMCQ(wsel, term);
+    else if (mode === "nptel") renderNptel(term);
 
-    if (mode !== "mcq") updateStats();
+    updateStats();
     setMode(mode);
 
     if (pendingChapter) {
@@ -368,7 +522,7 @@
 
   function goTheory(wi, chapterId) {
     mode = "theory";
-    weekSel.value = String(wi);
+    if (weekSel) weekSel.value = String(wi);
     if (chapterId) {
       openChapters.add(chapterId);
       pendingChapter = chapterId;
@@ -393,12 +547,102 @@
   /* ------------------------------------------------------------------ *
    * Events
    * ------------------------------------------------------------------ */
+  function findBestTheoryChapterForNptel(qid) {
+    const nw = nptelWeekSel ? Number(nptelWeekSel.value) : 1;
+    const tWeek = NPTEL_THEORY.find(w => w.week === nw);
+    const item = tWeek ? tWeek.items.find(it => it.qid === qid) : null;
+    if (!THEORY.length) return { wi: nw-1, cid: null };
+    let wi = nw - 1;
+    if (wi < 0 || wi >= THEORY.length) wi = 0;
+    const w = THEORY[wi];
+    if (!item || !w) return { wi, cid: null };
+    const keys = (item.questionText + " " + item.theory + " " + item.why + " " + (item.keywords||[]).join(" ")).toLowerCase();
+    let best = null, bestScore = 0;
+    w.chapters.forEach(c => {
+      const hay = (c.title + " " + c.text).toLowerCase();
+      let score = 0;
+      if (keys.includes("smart dust") && hay.includes("smart dust")) score += 10;
+      if (keys.includes("m2m") && hay.includes("m2m")) score += 10;
+      if (keys.includes("ipv6") && hay.includes("ipv6")) score += 6;
+      if (keys.includes("ipv4") && hay.includes("ipv4")) score += 4;
+      if (keys.includes("hysteresis") && hay.includes("hysteresis")) score += 10;
+      if (keys.includes("accelerometer") && hay.includes("accelerometer")) score += 10;
+      if (keys.includes("vector") && hay.includes("vector")) score += 6;
+      if (keys.includes("gateway") && hay.includes("gateway")) score += 6;
+      if (keys.includes("actuator") && hay.includes("actuator")) score += 6;
+      if (keys.includes("slaac") && hay.includes("slaac")) score += 8;
+      if (keys.includes("dhcpv6") && hay.includes("dhcpv6")) score += 8;
+      if (keys.includes("address") && hay.includes("address")) score += 3;
+      if (keys.includes("sensor") && hay.includes("sensor")) score += 3;
+      if (score > bestScore) { bestScore = score; best = c; }
+    });
+    return { wi, cid: bestScore > 0 ? best.id : (w.chapters[0] ? w.chapters[0].id : null), item };
+  }
+
+  function highlightInTheory(cid, qid) {
+    setTimeout(() => {
+      const el = document.getElementById(cid);
+      if (!el) return;
+      el.open = true;
+      openChapters.add(cid);
+      const body = el.querySelector('.chapter-body');
+      if (!body) return;
+      const nw = nptelWeekSel ? Number(nptelWeekSel.value) : 1;
+      const tWeek = NPTEL_THEORY.find(w => w.week === nw);
+      const item = tWeek ? tWeek.items.find(it => it.qid === qid) : null;
+      const paras = body.querySelectorAll('p, li');
+      paras.forEach(p => p.classList.remove('theory-highlight'));
+      if (item) {
+        const keys = (item.theory + " " + item.why).toLowerCase().split(/[^a-z0-9]+/).filter(x=>x.length>4);
+        for (let i=0;i<paras.length;i++) {
+          const txt = paras[i].textContent.toLowerCase();
+          let hit = 0;
+          for (let k=0;k<keys.length && hit<2;k++) if (txt.includes(keys[k])) hit++;
+          if (hit>=2) { paras[i].classList.add('theory-highlight'); paras[i].scrollIntoView({block:'center'}); break; }
+        }
+      }
+    }, 150);
+  }
+
   out.addEventListener("click", (e) => {
     const actionEl = e.target.closest("[data-action]");
     if (actionEl) {
       const action = actionEl.dataset.action;
+      if (action === "nptel-switch-theory") {
+        nptelView = "theory";
+        saveUI();
+        setMode("nptel");
+        render();
+        syncHash();
+        return;
+      }
+      if (action === "nptel-switch-practice") {
+        nptelView = "practice";
+        saveUI();
+        setMode("nptel");
+        render();
+        syncHash();
+        return;
+      }
+      if (action === "nptel-read-theory") {
+        const qid = actionEl.dataset.qid;
+        const res = findBestTheoryChapterForNptel(qid);
+        mode = "theory";
+        if (weekSel) weekSel.value = String(res.wi);
+        if (res.cid) {
+          openChapters.add(res.cid);
+          pendingChapter = res.cid;
+        }
+        setMode(mode);
+        render();
+        syncHash(res.cid || null);
+        saveUI();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        highlightInTheory(res.cid, qid);
+        return;
+      }
       if (action === "open-mcq") {
-        goMCQ(weekSel.value === "all" ? undefined : Number(weekSel.value));
+        goMCQ(weekSel && weekSel.value === "all" ? undefined : (weekSel ? Number(weekSel.value) : undefined));
         return;
       }
       if (action === "open-week") {
@@ -440,7 +684,36 @@
     }
 
     const b = e.target.closest(".opt");
-    if (!b || mode !== "mcq") return;
+    if (!b) return;
+    if (mode === "nptel") {
+      const card = b.closest(".q");
+      const id = card.dataset.id;
+      if (nptelProg[id] !== undefined) return;
+      const oi = Number(b.dataset.o);
+      const nw = nptelWeekSel ? Number(nptelWeekSel.value) : 1;
+      const week = NPTEL_ASSESS.find(w => w.week === nw);
+      if (!week) return;
+      const q = week.questions.find(x => x.id === id);
+      if (!q) return;
+      const isMulti = Array.isArray(q.answer);
+      if (isMulti) {
+        // For MSQ, allow selecting multiple? The data shows arrays; just record selection for now
+        nptelProg[id] = [oi];
+        saveJSON(NPTEL_KEY, nptelProg);
+      } else {
+        nptelProg[id] = oi;
+        saveJSON(NPTEL_KEY, nptelProg);
+      }
+      card.classList.add("done");
+      const correctArr = Array.isArray(q.answer) ? q.answer : [q.answer];
+      card.querySelectorAll(".opt").forEach((el, i) => {
+        if (correctArr.includes(i)) el.classList.add("right");
+        else if (Number(el.dataset.o) === (Array.isArray(nptelProg[id]) ? nptelProg[id][0] : nptelProg[id])) el.classList.add("wrong");
+      });
+      updateStatsNptel(out.querySelectorAll(".q").length);
+      return;
+    }
+    if (mode !== "mcq") return;
     const card = b.closest(".q");
     const id = card.dataset.id;
     if (prog[id] !== undefined) return;
@@ -465,23 +738,51 @@
     saveUI();
   }, true);
 
-  tabTheory.addEventListener("click", () => {
+  if (tabTheory) tabTheory.addEventListener("click", () => {
     setMode("theory");
     render();
     syncHash();
     saveUI();
   });
-  tabMcq.addEventListener("click", () => {
+  if (tabMcq) tabMcq.addEventListener("click", () => {
     setMode("mcq");
     render();
     syncHash();
     saveUI();
   });
-
-  weekSel.addEventListener("change", () => {
+  if (tabNptel) tabNptel.addEventListener("click", () => {
+    mode = "nptel";
+    setMode("nptel");
     render();
     syncHash();
     saveUI();
+  });
+  if (nptelSubTheory) nptelSubTheory.addEventListener("click", () => {
+    nptelView = "theory";
+    saveUI();
+    if (mode !== "nptel") mode = "nptel";
+    setMode("nptel");
+    render();
+    syncHash();
+  });
+  if (nptelSubPractice) nptelSubPractice.addEventListener("click", () => {
+    nptelView = "practice";
+    saveUI();
+    if (mode !== "nptel") mode = "nptel";
+    setMode("nptel");
+    render();
+    syncHash();
+  });
+
+  if (weekSel) weekSel.addEventListener("change", () => {
+    render();
+    syncHash();
+    saveUI();
+  });
+  if (nptelWeekSel) nptelWeekSel.addEventListener("change", () => {
+    saveUI();
+    render();
+    syncHash();
   });
 
   search.addEventListener("input", () => {
@@ -495,7 +796,15 @@
     render();
   });
 
-  document.getElementById("reset").addEventListener("click", () => {
+  const resetBtn = document.getElementById("reset");
+  if (resetBtn) resetBtn.addEventListener("click", () => {
+    if (mode === "nptel") {
+      if (!confirm("Clear your NPTEL Week Assessment answers?")) return;
+      nptelProg = {};
+      saveJSON(NPTEL_KEY, nptelProg);
+      render();
+      return;
+    }
     if (!confirm("Clear your theory reading progress and saved MCQ answers?")) return;
     prog = {};
     theoryProg = {};
@@ -509,8 +818,15 @@
   window.addEventListener("hashchange", () => {
     const h = readHash();
     if (!h) return;
+    if (h.mode === "nptel") {
+      mode = "nptel";
+      if (nptelWeekSel && h.nptelWeek) nptelWeekSel.value = h.nptelWeek;
+      setMode(mode);
+      render();
+      return;
+    }
     mode = h.mode;
-    weekSel.value = h.week;
+    if (weekSel && h.week !== undefined) weekSel.value = h.week;
     pendingChapter = h.chapter;
     setMode(mode);
     render();
