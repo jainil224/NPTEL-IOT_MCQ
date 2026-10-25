@@ -122,6 +122,15 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 .opt.wrong{background:var(--badbg);border-color:var(--bad)}
 .ans{display:none;margin-top:8px;padding:8px 10px;background:var(--card);border-left:3px solid var(--fg);border-radius:4px;font-size:.88rem}
 .q.done .ans,.show .ans{display:block}
+.multi-badge{display:inline-flex;align-items:center;gap:4px;font-size:.74rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--notebg);color:var(--acc2);border:1px solid rgba(26,115,232,.3);letter-spacing:.02em;text-transform:uppercase}
+.opt-box{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border:1.5px solid var(--line);border-radius:4px;margin-right:2px;font-size:12px;color:transparent;transition:all .15s ease;flex-shrink:0}
+.opt.selected .opt-box{background:var(--acc2);border-color:var(--acc2);color:#fff}
+.opt.selected{background:var(--card);border-color:var(--acc2)}
+.msq-submit-row{margin-top:10px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.msq-submit-btn{background:var(--acc2);color:#fff;border:none;font-weight:600;font-size:.85rem;padding:6px 16px;border-radius:7px;cursor:pointer;transition:all .15s ease}
+.msq-submit-btn:hover:not(:disabled){opacity:.9;box-shadow:0 2px 8px rgba(26,115,232,.35)}
+.msq-submit-btn:disabled{opacity:.45;cursor:not-allowed}
+.msq-hint{font-size:.82rem;color:var(--mut)}
 .empty{color:var(--mut);padding:30px 0;text-align:center}
 .muted{color:var(--mut)}
 @media (max-width: 680px){
