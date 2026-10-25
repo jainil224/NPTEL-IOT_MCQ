@@ -24,6 +24,7 @@
   const tabTheory = document.getElementById("tab-theory");
   const tabMcq = document.getElementById("tab-mcq");
   const tabNptel = document.getElementById("tab-nptel");
+  const tabRevision = document.getElementById("tab-revision");
   const THEME_KEY = "iot-theme";
 
   function getSystemTheme() {
@@ -75,7 +76,9 @@
   let theoryProg = loadJSON(THEORY_KEY, {});
   let nptelProg = loadJSON(NPTEL_KEY, {});
   const ui = loadJSON(UI_KEY, {});
-  let mode = ui.mode === "mcq" || ui.mode === "nptel" ? ui.mode : "theory";
+  let mode = ui.mode === "mcq" || ui.mode === "nptel" || ui.mode === "revision" ? ui.mode : "theory";
+  let revView = ui.revView === "fullforms" ? "fullforms" : "summary";
+  let revFilterWeek = ui.revFilterWeek || "all";
   let nptelView = ui.nptelView === "practice" ? "practice" : "theory";
   let showAll = false;
   let pendingChapter = null;
@@ -95,6 +98,8 @@
       nptelView,
       nptelWeek: nptelWeekSel ? nptelWeekSel.value : undefined,
       open: Array.from(openChapters),
+      revView,
+      revFilterWeek,
     });
   }
 
@@ -114,10 +119,12 @@
     if (tabTheory) tabTheory.setAttribute("aria-selected", String(mode === "theory"));
     if (tabMcq) tabMcq.setAttribute("aria-selected", String(mode === "mcq"));
     if (tabNptel) tabNptel.setAttribute("aria-selected", String(mode === "nptel"));
+    if (tabRevision) tabRevision.setAttribute("aria-selected", String(mode === "revision"));
     toggleBtn.hidden = mode !== "mcq" && mode !== "nptel";
     if (mode === "theory") search.placeholder = "Search theory…";
     else if (mode === "mcq") search.placeholder = "Search questions…";
     else if (mode === "nptel") search.placeholder = nptelView === "theory" ? "Search NPTEL theory…" : "Search assessment questions…";
+    else if (mode === "revision") search.placeholder = revView === "fullforms" ? "Search all full forms & abbreviations…" : "Search 1-10 week summaries & IMP topics…";
     if (nptelWeekSel) {
       nptelWeekSel.style.display = mode === "nptel" ? "" : "none";
     }
@@ -133,6 +140,9 @@
   }
 
   function hashFor(chapterId) {
+    if (mode === "revision") {
+      return `#/revision/${revView}`;
+    }
     if (mode === "nptel") {
       const nw = nptelWeekSel ? nptelWeekSel.value : "1";
       return `#/nptel/week/${nw}`;
@@ -149,6 +159,8 @@
   }
 
   function readHash() {
+    const mRev = location.hash.match(/^#\/revision(?:\/(summary|fullforms))?/);
+    if (mRev) return { mode: "revision", revView: mRev[1] || "summary" };
     const m1 = location.hash.match(/^#\/nptel\/week\/(\d+)/);
     if (m1) return { mode: "nptel", nptelWeek: m1[1], chapter: null };
     const m = location.hash.match(/^#\/week\/(all|\d+)\/(theory|mcq)(?:\/([\w-]+))?/);
@@ -179,7 +191,10 @@
 
   const initialHash = readHash();
   if (initialHash) {
-    if (initialHash.mode === "nptel") {
+    if (initialHash.mode === "revision") {
+      mode = "revision";
+      if (initialHash.revView) revView = initialHash.revView;
+    } else if (initialHash.mode === "nptel") {
       mode = "nptel";
       if (nptelWeekSel && initialHash.nptelWeek) nptelWeekSel.value = initialHash.nptelWeek;
     } else {
@@ -423,6 +438,13 @@
         (attempted ? ` (${Math.round((100 * correct) / attempted)}%)` : "");
     } else if (mode === "nptel") {
       updateStatsNptel(shown || 0);
+    } else if (mode === "revision") {
+      if (revView === "fullforms") {
+        const count = getMasterFullForms().length;
+        stats.textContent = `Revision Hub · Option 2: All ${count} Full Forms & Abbreviations across Weeks 1–10`;
+      } else {
+        stats.textContent = `Revision Hub · Option 1: Weeks 1–10 Consolidated Summaries & High-Yield Exam IMP Topics`;
+      }
     }
   }
 
@@ -556,12 +578,350 @@
     stats.textContent = `NPTEL Week ${week.week} Assessment – ${shown} shown / ${week.questions.length} • Attempted ${attempted} • Correct ${correct}` + (attempted ? ` (${Math.round(100*correct/attempted)}%)` : "");
   }
 
+  /* ------------------------------------------------------------------ *
+   * Revision Hub (Summaries, IMP Topics, All Full Forms)
+   * ------------------------------------------------------------------ */
+  let cachedFullForms = null;
+  function getMasterFullForms() {
+    if (cachedFullForms) return cachedFullForms;
+    const map = new Map();
+    THEORY.forEach(w => {
+      w.chapters.forEach(c => {
+        if (c.title.toLowerCase().includes("key full forms and abbreviations") || c.html.includes("ff-table")) {
+          const regex = /<tr>\s*<td>(.*?)<\/td>\s*<td>(.*?)<\/td>\s*<\/tr>/gi;
+          let m;
+          while ((m = regex.exec(c.html)) !== null) {
+            const abbr = m[1].replace(/<[^>]+>/g, "").trim();
+            const full = m[2].replace(/<[^>]+>/g, "").trim();
+            if (abbr && full && abbr.toLowerCase() !== "abbreviation") {
+              if (!map.has(abbr)) {
+                map.set(abbr, { abbr, full, weeks: [w.week] });
+              } else {
+                const item = map.get(abbr);
+                if (!item.weeks.includes(w.week)) item.weeks.push(w.week);
+              }
+            }
+          }
+        }
+      });
+    });
+    cachedFullForms = Array.from(map.values()).sort((a, b) => a.abbr.localeCompare(b.abbr, undefined, { sensitivity: "base" }));
+    return cachedFullForms;
+  }
+
+  const NPTEL_IMP_TOPICS = [
+    {
+      week: "Week 1",
+      title: "Sensors, Transducers & Actuators",
+      badge: "EXAM CORE",
+      points: [
+        "Sensor: Measures/detects physical properties or environmental states.",
+        "Transducer: Converts one form of energy or signal into another.",
+        "Actuator: Converts control decision/signal into physical action (movement/flow).",
+        "6 Actuator Types: Electrical, Mechanical, Hydraulic (pressurised liquid), Pneumatic (compressed gas/air), Thermal (heat), Magnetic."
+      ],
+      formula: "Relay = electrically controlled switch · Solenoid valve = electromagnetic control of flow"
+    },
+    {
+      week: "Week 1",
+      title: "Sensor Metrics & Distance Formula",
+      badge: "HIGH YIELD",
+      points: [
+        "Accuracy = Closeness of measurement to the true reference value.",
+        "Precision = Repeatability / agreement among repeated measurements.",
+        "Resolution = Smallest detectable change (High resolution ≠ High accuracy!).",
+        "Sensitivity = ΔOutput / ΔInput · Drift = Slow output change over time under similar conditions."
+      ],
+      formula: "Ultrasonic Distance = (Speed of Sound × Round-Trip Time) ÷ 2"
+    },
+    {
+      week: "Week 1 & 2",
+      title: "Gateway vs. Proxy (Classic Exam Trap)",
+      badge: "TRAP QUESTION",
+      points: [
+        "IoT Gateway: Router-like, operates at IP/network layer, connects LAN to WAN and forwards packets.",
+        "IoT Proxy: Operates at Application layer, mediates application-level functions, protocol translation, caching."
+      ],
+      formula: "Gateway = IP Layer Forwarding · Proxy = Application Layer Mediation"
+    },
+    {
+      week: "Week 2",
+      title: "MQTT Messaging Protocol",
+      badge: "TOP FAVORITE",
+      points: [
+        "Lightweight Publish-Subscribe messaging over TCP/IP.",
+        "Components: Publisher, Central Broker, Subscriber, Topics.",
+        "Standardized by OASIS (2013), created by IBM (1999).",
+        "Methods: CONNECT, DISCONNECT, SUBSCRIBE, UNSUBSCRIBE, PUBLISH.",
+        "Wildcards: '+' = single-level wildcard (e.g. house/+/temperature), '#' = multi-level."
+      ],
+      formula: "Exam Clue: 'Topic + Broker + Pub/Sub over TCP' → MQTT"
+    },
+    {
+      week: "Week 2",
+      title: "CoAP (Constrained Application Protocol)",
+      badge: "TOP FAVORITE",
+      points: [
+        "REST-like Request/Response protocol for constrained devices over UDP.",
+        "Methods: GET (retrieve), POST (create/process), PUT (update), DELETE (remove).",
+        "CON (Confirmable, expects ACK) vs NON (Non-confirmable, no ACK).",
+        "Piggyback (response inside ACK) vs Separate (ACK first, response later)."
+      ],
+      formula: "Exam Clue: 'Lightweight REST-like over UDP' → CoAP"
+    },
+    {
+      week: "Week 2 & 3",
+      title: "IEEE 802.15.4, ZigBee & 6LoWPAN",
+      badge: "NETWORKING",
+      points: [
+        "IEEE 802.15.4: Defines PHY & MAC layers for LR-WPAN. Uses CSMA-CA. FFD vs RFD.",
+        "ZigBee: Adds Network & Application layers above 802.15.4. Roles: ZC (Coordinator), ZR (Router), ZED (End Device).",
+        "6LoWPAN: Adapts 128-bit IPv6 over 802.15.4 via compression, fragmentation, and mesh routing."
+      ],
+      formula: "802.15.4 = PHY/MAC · ZigBee = Network/App · 6LoWPAN = IPv6 Adaptation"
+    },
+    {
+      week: "Week 2 & 4",
+      title: "RPL & LOADng Routing Protocols",
+      badge: "ROUTING",
+      points: [
+        "RPL: Distance-vector IPv6 routing for LLNs. Builds Destination-Oriented DAG (DODAG) rooted at border router.",
+        "RPL Control Messages: DIO (Information Object), DAO (Advertisement Object), DIS (Information Solicitation).",
+        "LOADng: Lightweight On-demand Ad hoc Distance-vector routing (reactive protocol based on AODV)."
+      ],
+      formula: "RPL = Proactive DODAG tree · LOADng = Reactive On-Demand"
+    },
+    {
+      week: "Week 5 & 6",
+      title: "Arduino vs. Raspberry Pi & Buses",
+      badge: "HARDWARE",
+      points: [
+        "Arduino: Microcontroller board (e.g. ATmega328P), bare-metal execution, simple C/C++ (setup & loop), real-time GPIO control.",
+        "Raspberry Pi: Single Board Computer (SBC) with SoC (ARM CPU, GPU, RAM), runs Linux OS, supports Python, HDMI, USB, networking.",
+        "Bus Interfaces: SPI (4-wire: MOSI, MISO, SCK, CS), I2C (2-wire: SDA, SCL), UART (TX, RX)."
+      ],
+      formula: "Arduino = Microcontroller (low power) · Pi = Microprocessor SBC (Full OS)"
+    },
+    {
+      week: "Week 8 & 9",
+      title: "NIST Cloud, CIA Triad & Fog Latency",
+      badge: "CLOUD & FOG",
+      points: [
+        "5 NIST Cloud Characteristics: On-demand self-service, Broad network access, Resource pooling, Rapid elasticity, Measured service.",
+        "Service Models: IaaS (Infrastructure), PaaS (Platform), SaaS (Software) - user responsibility decreases from IaaS to SaaS.",
+        "CIA Triad: Confidentiality, Integrity, Availability.",
+        "Fog Computing: Low-latency compute near edge devices for time-critical decisions."
+      ],
+      formula: "Fog Latency: L = T(device→cloud) + T(analysis) + T(cloud→device)"
+    },
+    {
+      week: "Week 9 & 10",
+      title: "OpenStack, Sensor-Cloud & Smart Cities (V2X)",
+      badge: "APPLICATIONS",
+      points: [
+        "OpenStack: Nova (Compute), Swift/Cinder (Storage), Neutron (Network), Glance (Images), Keystone (Identity), Horizon (Dashboard).",
+        "Sensor-Cloud: Sensing-as-a-Service (Se-aaS). CoV-I (same region) vs CoV-II (multi-region).",
+        "Connected Vehicles (V2X): V2V, V2I, V2P. Dedicated Short-Range Communications (DSRC): 75 MHz bandwidth at 5.850–5.925 GHz, IEEE 802.11p/1609.",
+        "Smart City Body Analogy: Nerves = Networks, Brain = Intelligence, Organs = Services."
+      ],
+      formula: "DSRC = 75 MHz (5.9 GHz band) · V2X = V2V + V2I + V2P"
+    }
+  ];
+
+  function renderRevision(term) {
+    const fullForms = getMasterFullForms();
+
+    let html = `<div class="hero">
+      <h2>📚 NPTEL IoT Quick Revision Hub</h2>
+      <p class="sub">Two comprehensive revision options: Consolidated 1–10 Week Summaries with High-Yield Exam Topics, or the Master Glossary of 165+ Full Forms at once.</p>
+    </div>`;
+
+    // 2 Option Cards
+    html += `<div class="rev-option-grid">
+      <div class="rev-option-card${revView === "summary" ? " active" : ""}" data-action="rev-switch-view" data-view="summary">
+        <span class="roc-icon">📋</span>
+        <div>
+          <h3>Option 1: All 1–10 Week Summaries &amp; Exam IMP Topics</h3>
+          <p>Consolidated lecture summaries, core exam highlights, key terms, and 10 high-yield topics frequently tested in NPTEL exams.</p>
+        </div>
+        <span class="roc-badge">High-Yield Exam Prep</span>
+      </div>
+      <div class="rev-option-card${revView === "fullforms" ? " active" : ""}" data-action="rev-switch-view" data-view="fullforms">
+        <span class="roc-icon">🔤</span>
+        <div>
+          <h3>Option 2: All Week Full Forms at Once (165+)</h3>
+          <p>Master alphabetical list of every abbreviation, networking protocol, hardware term, and standard across all 10 weeks.</p>
+        </div>
+        <span class="roc-badge">All 10 Weeks at Once</span>
+      </div>
+    </div>`;
+
+    if (revView === "summary") {
+      // -------------------------------------------------------------
+      // OPTION 1: 1-10 WEEK SUMMARIES & HIGH-YIELD EXAM IMP TOPICS
+      // -------------------------------------------------------------
+
+      // Section A: High-Yield Exam IMP Topics
+      let filteredImp = NPTEL_IMP_TOPICS;
+      if (term) {
+        filteredImp = filteredImp.filter(it => 
+          (it.title + " " + it.points.join(" ") + " " + it.formula + " " + it.week).toLowerCase().includes(term)
+        );
+      }
+
+      html += `<div class="rev-section-title">
+        <span>🎯 High-Probability NPTEL Exam Topics</span>
+        <span class="rs-pill">Must Revise</span>
+      </div>`;
+
+      if (filteredImp.length > 0) {
+        html += `<div class="imp-grid">`;
+        filteredImp.forEach(it => {
+          html += `<div class="imp-card">
+            <div>
+              <div class="imp-card-top">
+                <span class="imp-week-label">${esc(it.week)}</span>
+                <span class="imp-badge">${esc(it.badge)}</span>
+              </div>
+              <h4>${esc(it.title)}</h4>
+              <ul>
+                ${it.points.map(pt => `<li>${esc(pt)}</li>`).join("")}
+              </ul>
+            </div>
+            <div class="imp-formula">💡 ${esc(it.formula)}</div>
+          </div>`;
+        });
+        html += `</div>`;
+      } else {
+        html += `<div class="empty" style="margin-bottom:20px">No IMP topics match "${esc(term)}".</div>`;
+      }
+
+      // Section B: All 1-10 Week Summaries & Important Notes
+      html += `<div class="rev-section-title">
+        <span>📖 All 1–10 Week Consolidated Summaries &amp; Important Notes</span>
+        <span class="rs-pill">Weeks 1–10</span>
+      </div>`;
+
+      // Week filter bar + expand/collapse controls
+      html += `<div class="rev-filter-bar">
+        <span style="font-size:.82rem;font-weight:700;color:var(--fg);margin-right:4px">Filter Week:</span>
+        <button class="rev-filter-btn${revFilterWeek === "all" ? " active" : ""}" data-action="rev-filter-week" data-week="all">All Weeks (1–10)</button>
+        ${THEORY.map(w => `<button class="rev-filter-btn${revFilterWeek === String(w.week) ? " active" : ""}" data-action="rev-filter-week" data-week="${w.week}">W${w.week}</button>`).join("")}
+        <div style="margin-left:auto;display:flex;gap:6px">
+          <button class="ghost" data-action="rev-expand-all" style="font-size:.78rem;padding:3px 8px">▾ Expand All</button>
+          <button class="ghost" data-action="rev-collapse-all" style="font-size:.78rem;padding:3px 8px">▴ Collapse All</button>
+        </div>
+      </div>`;
+
+      let weeksToShow = THEORY;
+      if (revFilterWeek !== "all") {
+        const targetW = Number(revFilterWeek);
+        weeksToShow = THEORY.filter(w => w.week === targetW);
+      }
+      if (term) {
+        weeksToShow = weeksToShow.filter(w => 
+          (w.title + " " + w.intro + " " + w.highlights.join(" ")).toLowerCase().includes(term)
+        );
+      }
+
+      if (weeksToShow.length > 0) {
+        weeksToShow.forEach(w => {
+          const isRead = readCount(w);
+          html += `<details class="rev-week-block" open>
+            <summary>
+              <span class="rwb-week-num">${w.week}</span>
+              <span style="color:var(--fg)">Week ${w.week}: ${esc(w.title)}</span>
+              <span style="font-size:.78rem;color:var(--mut);font-weight:500;margin-left:8px">${esc(w.lectures)}</span>
+              <span style="font-size:.74rem;color:var(--ok);margin-left:auto;margin-right:12px;font-weight:600">${isRead}/${w.chapters.length} read</span>
+            </summary>
+            <div class="rev-week-body">
+              <div class="rev-week-intro">
+                <b style="color:var(--acc2)">Executive Summary:</b> ${esc(w.intro)}
+              </div>
+              <div>
+                <b style="font-size:.88rem;color:var(--fg);display:block;margin-bottom:8px">⭐ Key Exam Highlights &amp; Notes:</b>
+                <ul class="rev-highlights-list">
+                  ${w.highlights.map(h => `<li>${esc(h)}</li>`).join("")}
+                </ul>
+              </div>
+              <div class="rev-terms-row">
+                <span style="font-size:.76rem;color:var(--mut);font-weight:700;align-self:center;margin-right:4px">Key Terms:</span>
+                ${w.chapters.slice(0, 4).flatMap(c => c.terms || []).slice(0, 10).map(t => `<span class="rev-term">${esc(t)}</span>`).join("")}
+              </div>
+              <div>
+                <button class="rev-nav-btn" data-action="open-week" data-week="${w.week - 1}">Open Full Week ${w.week} Theory →</button>
+              </div>
+            </div>
+          </details>`;
+        });
+      } else {
+        html += `<div class="empty">No week summaries match "${esc(term)}".</div>`;
+      }
+
+    } else {
+      // -------------------------------------------------------------
+      // OPTION 2: ALL WEEK FULL FORMS AT ONCE (MASTER GLOSSARY)
+      // -------------------------------------------------------------
+      let items = fullForms;
+      if (revFilterWeek !== "all") {
+        const targetW = Number(revFilterWeek);
+        items = items.filter(it => it.weeks.includes(targetW));
+      }
+      if (term) {
+        items = items.filter(it => (it.abbr + " " + it.full).toLowerCase().includes(term));
+      }
+
+      html += `<div class="rev-section-title">
+        <span>🔤 All-Week Full Forms &amp; Abbreviations Master List</span>
+        <span class="rs-pill">${items.length} Abbreviations</span>
+      </div>`;
+
+      // Filter bar & Copy button
+      html += `<div class="rev-filter-bar">
+        <span style="font-size:.82rem;font-weight:700;color:var(--fg);margin-right:4px">Filter Week:</span>
+        <button class="rev-filter-btn${revFilterWeek === "all" ? " active" : ""}" data-action="rev-filter-week" data-week="all">All Weeks (${fullForms.length})</button>
+        ${THEORY.map(w => `<button class="rev-filter-btn${revFilterWeek === String(w.week) ? " active" : ""}" data-action="rev-filter-week" data-week="${w.week}">W${w.week}</button>`).join("")}
+        <div style="margin-left:auto">
+          <button class="rev-copy-btn" data-action="rev-copy-fullforms">📋 Copy All Full Forms</button>
+        </div>
+      </div>`;
+
+      if (items.length > 0) {
+        html += `<div class="rev-ff-table-wrap">
+          <table class="rev-ff-table">
+            <thead>
+              <tr>
+                <th style="width:140px">Abbreviation</th>
+                <th>Full Form / Expansion</th>
+                <th style="width:180px">Week Origin</th>
+              </tr>
+            </thead>
+            <tbody>`;
+        items.forEach(it => {
+          const weekTags = it.weeks.map(wk => `<span class="rev-ff-week-tag" data-action="open-week" data-week="${wk - 1}">Week ${wk}</span>`).join(" ");
+          html += `<tr>
+            <td><span class="rev-ff-abbr">${esc(it.abbr)}</span></td>
+            <td><b>${esc(it.full)}</b></td>
+            <td>${weekTags}</td>
+          </tr>`;
+        });
+        html += `</tbody></table></div>`;
+      } else {
+        html += `<div class="empty">No full forms match "${esc(term)}".</div>`;
+      }
+    }
+
+    out.innerHTML = html;
+    out.classList.remove("show");
+  }
+
   function render() {
     const wsel = weekSel ? weekSel.value : "0";
     const term = search.value.trim().toLowerCase();
     if (mode === "theory") renderTheory(wsel, term);
     else if (mode === "mcq") renderMCQ(wsel, term);
     else if (mode === "nptel") renderNptel(term);
+    else if (mode === "revision") renderRevision(term);
 
     updateStats();
     setMode(mode);
@@ -748,6 +1108,39 @@
         goTheory(Number(actionEl.dataset.week), actionEl.dataset.cid || null);
         return;
       }
+      if (action === "rev-switch-view") {
+        revView = actionEl.dataset.view || "summary";
+        saveUI();
+        syncHash();
+        render();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        return;
+      }
+      if (action === "rev-filter-week") {
+        revFilterWeek = actionEl.dataset.week || "all";
+        saveUI();
+        render();
+        return;
+      }
+      if (action === "rev-expand-all") {
+        out.querySelectorAll("details.rev-week-block").forEach(d => d.open = true);
+        return;
+      }
+      if (action === "rev-collapse-all") {
+        out.querySelectorAll("details.rev-week-block").forEach(d => d.open = false);
+        return;
+      }
+      if (action === "rev-copy-fullforms") {
+        const fullForms = getMasterFullForms();
+        const text = fullForms.map(it => `${it.abbr} = ${it.full} (Week ${it.weeks.join(", ")})`).join("\n");
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(() => {
+            actionEl.textContent = "✓ Copied 165+ Full Forms!";
+            setTimeout(() => { actionEl.textContent = "📋 Copy All Full Forms"; }, 2500);
+          });
+        }
+        return;
+      }
       if (action === "read") {
         const cid = actionEl.dataset.cid;
         if (theoryProg[cid]) delete theoryProg[cid];
@@ -913,6 +1306,12 @@
     syncHash();
     saveUI();
   });
+  if (tabRevision) tabRevision.addEventListener("click", () => {
+    setMode("revision");
+    render();
+    syncHash();
+    saveUI();
+  });
   if (nptelSubTheory) nptelSubTheory.addEventListener("click", () => {
     nptelView = "theory";
     saveUI();
@@ -978,6 +1377,13 @@
     if (h.mode === "nptel") {
       mode = "nptel";
       if (nptelWeekSel && h.nptelWeek) nptelWeekSel.value = h.nptelWeek;
+      setMode(mode);
+      render();
+      return;
+    }
+    if (h.mode === "revision") {
+      mode = "revision";
+      if (h.revView) revView = h.revView;
       setMode(mode);
       render();
       return;

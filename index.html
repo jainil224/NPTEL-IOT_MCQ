@@ -58,6 +58,63 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 .ghost{background:transparent}
 .idea{border-left:3px solid var(--line);padding:4px 10px;color:var(--mut);font-style:italic;font-size:.88rem;margin-bottom:12px}
 .hero{border:1px solid var(--line);border-radius:14px;padding:18px 18px 14px;margin:4px 0 16px;background:linear-gradient(180deg,var(--card),var(--bg))}
+/* Revision Hub */
+.rev-option-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0 24px}
+.rev-option-card{border:2px solid var(--line);border-radius:14px;padding:20px;cursor:pointer;background:var(--card);transition:all .2s ease;position:relative;display:flex;flex-direction:column;justify-content:space-between}
+.rev-option-card:hover{border-color:var(--acc2);box-shadow:0 4px 20px rgba(26,115,232,.12);transform:translateY(-2px)}
+.rev-option-card.active{border-color:var(--acc2);background:var(--notebg);box-shadow:0 0 0 1px var(--acc2), 0 4px 18px rgba(26,115,232,.15)}
+.rev-option-card .roc-icon{font-size:2rem;margin-bottom:8px;display:block}
+.rev-option-card h3{font-size:1.08rem;font-weight:750;margin:0 0 6px;color:var(--fg)}
+.rev-option-card p{font-size:.86rem;color:var(--mut);margin:0 0 12px;line-height:1.55}
+.rev-option-card .roc-badge{display:inline-flex;align-items:center;gap:4px;font-size:.74rem;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--card);color:var(--acc2);border:1px solid rgba(26,115,232,.3);text-transform:uppercase;letter-spacing:.04em;align-self:flex-start}
+.rev-option-card.active .roc-badge{background:var(--acc2);color:#fff;border-color:var(--acc2)}
+
+.rev-subtabs-row{display:flex;align-items:center;justify-content:center;margin-bottom:22px}
+.rev-filter-bar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:14px 0 18px}
+.rev-filter-btn{font-size:.78rem;padding:4px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--mut);cursor:pointer;transition:all .15s ease}
+.rev-filter-btn:hover{color:var(--fg);border-color:var(--acc2)}
+.rev-filter-btn.active{background:var(--acc2);color:#fff;border-color:var(--acc2);font-weight:700}
+
+.rev-week-block{margin-bottom:14px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:var(--bg)}
+.rev-week-block summary{padding:13px 16px;cursor:pointer;list-style:none;display:flex;align-items:center;gap:12px;background:var(--card);font-weight:650;user-select:none;transition:background .15s}
+.rev-week-block summary:hover{background:rgba(128,128,128,.06)}
+.rev-week-block summary::-webkit-details-marker{display:none}
+.rev-week-block summary::after{content:'▸';font-size:.82rem;margin-left:auto;color:var(--mut);transition:transform .2s ease}
+.rev-week-block[open] summary::after{transform:rotate(90deg)}
+.rev-week-block summary .rwb-week-num{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--acc2);color:#fff;font-size:.78rem;font-weight:800;flex-shrink:0}
+.rev-week-body{padding:16px 18px}
+.rev-week-intro{color:var(--fg);font-size:.92rem;line-height:1.65;margin:0 0 14px;padding:0 0 12px;border-bottom:1px solid var(--line)}
+.rev-highlights-list{margin:0 0 14px;padding-left:18px}
+.rev-highlights-list li{margin:5px 0;font-size:.91rem;line-height:1.55;color:var(--fg)}
+.rev-terms-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.rev-term{font-size:.76rem;padding:2px 8px;border-radius:999px;background:var(--card);color:var(--mut);border:1px solid var(--line);font-weight:600}
+.rev-nav-btn{margin-top:12px;font-size:.82rem;padding:6px 14px;border-radius:8px;border:1px solid var(--acc2);background:transparent;color:var(--acc2);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:6px;transition:all .15s ease}
+.rev-nav-btn:hover{background:var(--acc2);color:#fff}
+
+.rev-section-title{font-size:1.15rem;font-weight:750;margin:28px 0 14px;display:flex;align-items:center;gap:10px;color:var(--fg)}
+.rev-section-title span.rs-pill{font-size:.7rem;padding:2px 9px;border-radius:999px;background:var(--acc2);color:#fff;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.imp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:12px;margin-bottom:28px}
+.imp-card{border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--card);font-size:.88rem;line-height:1.55;display:flex;flex-direction:column;justify-content:space-between}
+.imp-card:hover{border-color:var(--acc2);box-shadow:0 3px 12px rgba(0,0,0,.06)}
+.imp-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.imp-card .imp-week-label{font-size:.72rem;font-weight:750;color:var(--acc2);text-transform:uppercase;letter-spacing:.05em}
+.imp-card .imp-badge{font-size:.68rem;padding:1px 7px;border-radius:999px;background:var(--warnbg);color:var(--warn);font-weight:700}
+.imp-card h4{font-size:.95rem;margin:0 0 8px;font-weight:700;color:var(--fg)}
+.imp-card ul{margin:0 0 10px;padding-left:16px}
+.imp-card li{margin:3px 0;color:var(--fg)}
+.imp-formula{background:var(--bg);border:1px solid var(--line);border-left:3px solid var(--acc2);border-radius:6px;padding:6px 9px;font-size:.8rem;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;margin-top:auto}
+
+.rev-ff-table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line);background:var(--card);margin:14px 0 24px}
+.rev-ff-table{width:100%;border-collapse:collapse;font-size:.88rem}
+.rev-ff-table th{background:var(--card);padding:10px 14px;border-bottom:2px solid var(--line);text-align:left;font-weight:700;color:var(--fg)}
+.rev-ff-table td{padding:9px 14px;border-bottom:1px solid var(--line);vertical-align:middle;color:var(--fg)}
+.rev-ff-table tr:hover td{background:rgba(128,128,128,.05)}
+.rev-ff-table tr:last-child td{border-bottom:0}
+.rev-ff-abbr{font-weight:750;color:var(--fg);font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:var(--bg);padding:2px 7px;border-radius:5px;border:1px solid var(--line)}
+.rev-ff-week-tag{font-size:.74rem;padding:2px 8px;border-radius:999px;background:var(--notebg);color:var(--acc2);border:1px solid rgba(26,115,232,.3);cursor:pointer;font-weight:600;display:inline-block;margin:1px 2px}
+.rev-ff-week-tag:hover{background:var(--acc2);color:#fff}
+.rev-copy-btn{display:inline-flex;align-items:center;gap:6px;font-size:.82rem;padding:6px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--fg);cursor:pointer;transition:all .15s;font-weight:600}
+.rev-copy-btn:hover{border-color:var(--acc2);color:var(--acc2)}
 .hero h2{border:0;padding:0;margin:0 0 6px;font-size:1.5rem;line-height:1.25}
 .hero .sub{color:var(--mut);font-size:.9rem;margin:0 0 10px}
 .hero p{margin:0 0 12px}
@@ -164,12 +221,13 @@ h3{font-size:1.05rem;margin:24px 0 6px}
   .theme-btn .theme-label{display:none}
   #toggle{grid-column:1 / -1;padding:5px 8px;font-size:.8rem}
   .tabs{grid-column:1 / -1;width:100%;display:flex;padding:2px;gap:2px}
-  .tabs .tab{flex:1;text-align:center;padding:5px 6px;font-size:.78rem;white-space:nowrap}
+  .tabs .tab{flex:1;text-align:center;padding:5px 4px;font-size:.76rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   #week,#nptel-week{grid-column:1 / -1;width:100%;padding:6px 8px;font-size:.82rem}
   #nptel-subtabs{grid-column:1 / -1;width:100%;display:flex!important;padding:2px;gap:2px}
   #nptel-subtabs[style*="display: none"],#nptel-subtabs[style*="display:none"]{display:none!important}
   #nptel-subtabs .tab{flex:1;text-align:center;padding:5px 4px;font-size:.78rem;white-space:nowrap}
   #search{grid-column:1 / -1;width:100%;padding:6px 10px;font-size:.84rem}
+  .rev-option-grid{grid-template-columns:1fr;gap:12px}
   .hero{padding:12px;border-radius:10px;margin-bottom:12px}
   .hero h2{font-size:1.15rem}
   .hero-row{flex-direction:column;align-items:flex-start}
@@ -208,6 +266,7 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 <button class="tab" id="tab-theory" role="tab" aria-selected="true" data-mode="theory">Theory</button>
 <button class="tab" id="tab-mcq" role="tab" aria-selected="false" data-mode="mcq">MCQs</button>
 <button class="tab" id="tab-nptel" role="tab" aria-selected="false" data-mode="nptel">NPTEL Week Assessment</button>
+<button class="tab" id="tab-revision" role="tab" aria-selected="false" data-mode="revision">📚 Revision Hub</button>
 </div>
 <select id="week" aria-label="Week"></select>
 <select id="nptel-week" aria-label="NPTEL Week" style="display:none"></select>
