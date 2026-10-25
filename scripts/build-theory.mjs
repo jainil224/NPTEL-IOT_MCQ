@@ -222,6 +222,202 @@ const WEEK_META = {
   },
 };
 
+const WEEK_FULL_FORMS = {
+  1: [
+    { abbr: "ADC", full: "Analog-to-Digital Converter" },
+    { abbr: "AIDC", full: "Automatic Identification and Data Capture" },
+    { abbr: "DAC", full: "Digital-to-Analog Converter" },
+    { abbr: "IoT", full: "Internet of Things" },
+    { abbr: "IP", full: "Internet Protocol" },
+    { abbr: "IPv4", full: "Internet Protocol version 4 (32-bit address space)" },
+    { abbr: "IPv6", full: "Internet Protocol version 6 (128-bit address space)" },
+    { abbr: "ISP", full: "Internet Service Provider" },
+    { abbr: "ITU", full: "International Telecommunication Union (2005 IoT Report)" },
+    { abbr: "LAN", full: "Local Area Network" },
+    { abbr: "M2M", full: "Machine-to-Machine" },
+    { abbr: "PIR", full: "Passive Infrared (motion sensor)" },
+    { abbr: "RFID", full: "Radio-Frequency Identification" },
+    { abbr: "WAN", full: "Wide Area Network" },
+  ],
+  2: [
+    { abbr: "6LoWPAN", full: "IPv6 over Low-Power Wireless Personal Area Networks" },
+    { abbr: "AMQP", full: "Advanced Message Queuing Protocol" },
+    { abbr: "AODV", full: "Ad Hoc On-Demand Distance Vector routing" },
+    { abbr: "APS", full: "Application Support Sublayer (ZigBee)" },
+    { abbr: "CoAP", full: "Constrained Application Protocol (REST-like over UDP)" },
+    { abbr: "CSMA-CA", full: "Carrier Sense Multiple Access with Collision Avoidance" },
+    { abbr: "FFD", full: "Full Function Device (IEEE 802.15.4)" },
+    { abbr: "IEEE", full: "Institute of Electrical and Electronics Engineers" },
+    { abbr: "LLN", full: "Low-Power and Lossy Network" },
+    { abbr: "LOADng", full: "Lightweight On-demand Ad hoc Distance-vector routing — next generation" },
+    { abbr: "MAC", full: "Medium Access Control" },
+    { abbr: "MQTT", full: "Message Queue Telemetry Transport (publish-subscribe over TCP)" },
+    { abbr: "PHY", full: "Physical Layer" },
+    { abbr: "QoS", full: "Quality of Service" },
+    { abbr: "RERR", full: "Route Error (LOADng / AODV)" },
+    { abbr: "REST", full: "Representational State Transfer" },
+    { abbr: "RFD", full: "Reduced Function Device (IEEE 802.15.4)" },
+    { abbr: "RPL", full: "Routing Protocol for Low-Power and Lossy Networks" },
+    { abbr: "RREP", full: "Route Reply (LOADng / AODV)" },
+    { abbr: "RREQ", full: "Route Request (LOADng / AODV)" },
+    { abbr: "SMQTT", full: "Secure MQTT (Secure Message Queue Telemetry Transport)" },
+    { abbr: "TCP", full: "Transmission Control Protocol" },
+    { abbr: "UDP", full: "User Datagram Protocol" },
+    { abbr: "WPAN", full: "Wireless Personal Area Network" },
+    { abbr: "XML", full: "Extensible Markup Language" },
+    { abbr: "XMPP", full: "Extensible Messaging and Presence Protocol" },
+    { abbr: "ZC", full: "ZigBee Coordinator" },
+    { abbr: "ZDO", full: "ZigBee Device Object" },
+    { abbr: "ZED", full: "ZigBee End Device" },
+    { abbr: "ZigBee", full: "ZigBee Specification (networking & application layers above 802.15.4)" },
+    { abbr: "ZR", full: "ZigBee Router" },
+  ],
+  3: [
+    { abbr: "BLE", full: "Bluetooth Low Energy" },
+    { abbr: "BPSK", full: "Binary Phase Shift Keying" },
+    { abbr: "DSSS", full: "Direct Sequence Spread Spectrum" },
+    { abbr: "FHSS", full: "Frequency-Hopping Spread Spectrum" },
+    { abbr: "GFSK", full: "Gaussian Frequency Shift Keying" },
+    { abbr: "HART", full: "Highway Addressable Remote Transducer" },
+    { abbr: "ISA", full: "International Society of Automation (ISA100.11a standard)" },
+    { abbr: "ISM", full: "Industrial, Scientific and Medical (radio frequency bands)" },
+    { abbr: "L2CAP", full: "Logical Link Control and Adaptation Protocol" },
+    { abbr: "NFC", full: "Near Field Communication" },
+    { abbr: "O-QPSK", full: "Offset Quadrature Phase Shift Keying" },
+    { abbr: "PLC", full: "Programmable Logic Controller" },
+    { abbr: "RFCOMM", full: "Radio Frequency Communications (serial cable emulation over Bluetooth)" },
+    { abbr: "SDP", full: "Service Discovery Protocol (Bluetooth)" },
+    { abbr: "TDMA", full: "Time Division Multiple Access" },
+    { abbr: "WBAN", full: "Wireless Body Area Network" },
+    { abbr: "WirelessHART", full: "Wireless Highway Addressable Remote Transducer" },
+    { abbr: "WSN", full: "Wireless Sensor Network" },
+    { abbr: "Z-Wave", full: "Z-Wave Wireless Protocol (sub-GHz smart home automation standard)" },
+  ],
+  4: [
+    { abbr: "AoA", full: "Angle of Arrival (sensor localization technique)" },
+    { abbr: "DTN", full: "Delay-Tolerant Network" },
+    { abbr: "FANET", full: "Flying Ad Hoc Network" },
+    { abbr: "GPS", full: "Global Positioning System" },
+    { abbr: "MANET", full: "Mobile Ad Hoc Network" },
+    { abbr: "OGDC", full: "Optimal Geographical Density Control (WSN coverage algorithm)" },
+    { abbr: "RSSI", full: "Received Signal Strength Indicator" },
+    { abbr: "SCADA", full: "Supervisory Control and Data Acquisition" },
+    { abbr: "TDoA", full: "Time Difference of Arrival (sensor localization technique)" },
+    { abbr: "ToA", full: "Time of Arrival (sensor localization technique)" },
+    { abbr: "UAV", full: "Unmanned Aerial Vehicle" },
+    { abbr: "UWASN", full: "Underwater Acoustic Sensor Network" },
+    { abbr: "VANET", full: "Vehicular Ad-hoc Network" },
+    { abbr: "WMSN", full: "Wireless Multimedia Sensor Network" },
+  ],
+  5: [
+    { abbr: "ADC", full: "Analog-to-Digital Converter" },
+    { abbr: "DAC", full: "Digital-to-Analog Converter" },
+    { abbr: "EEPROM", full: "Electrically Erasable Programmable Read-Only Memory" },
+    { abbr: "GPIO", full: "General-Purpose Input/Output" },
+    { abbr: "I2C / IIC", full: "Inter-Integrated Circuit (two-wire serial bus)" },
+    { abbr: "IDE", full: "Integrated Development Environment (Arduino IDE)" },
+    { abbr: "MCU", full: "Microcontroller Unit" },
+    { abbr: "PWM", full: "Pulse Width Modulation" },
+    { abbr: "SoC", full: "System on Chip" },
+    { abbr: "SPI", full: "Serial Peripheral Interface (synchronous 4-wire serial data link)" },
+    { abbr: "SRAM", full: "Static Random-Access Memory" },
+    { abbr: "UART", full: "Universal Asynchronous Receiver-Transmitter" },
+    { abbr: "UMB", full: "Universal Middleware Bridge (enables heterogeneous IoT interoperability)" },
+    { abbr: "USART", full: "Universal Synchronous/Asynchronous Receiver-Transmitter" },
+  ],
+  6: [
+    { abbr: "BCM", full: "Broadcom (Broadcom chip GPIO pin numbering on Raspberry Pi)" },
+    { abbr: "BOARD", full: "Physical Board pin numbering convention on Raspberry Pi header" },
+    { abbr: "CPU", full: "Central Processing Unit" },
+    { abbr: "CSI", full: "Camera Serial Interface (dedicated ribbon connector for RPi camera)" },
+    { abbr: "CSV", full: "Comma-Separated Values" },
+    { abbr: "DSI", full: "Display Serial Interface (dedicated ribbon connector for RPi display)" },
+    { abbr: "GPIO", full: "General-Purpose Input/Output (40 pins on Raspberry Pi 3 Model B)" },
+    { abbr: "GPU", full: "Graphics Processing Unit" },
+    { abbr: "HDMI", full: "High-Definition Multimedia Interface" },
+    { abbr: "OS", full: "Operating System (Raspberry Pi OS / Raspbian)" },
+    { abbr: "PIL", full: "Python Imaging Library (forked and maintained as Pillow)" },
+    { abbr: "RPi", full: "Raspberry Pi" },
+    { abbr: "SoC", full: "System on Chip (e.g., Broadcom BCM2837 on Raspberry Pi 3)" },
+  ],
+  7: [
+    { abbr: "AP", full: "Access Point (Wi-Fi master / hotspot mode)" },
+    { abbr: "API", full: "Application Programming Interface" },
+    { abbr: "DHCP", full: "Dynamic Host Configuration Protocol" },
+    { abbr: "DNS", full: "Domain Name System" },
+    { abbr: "INPP", full: "In-Network Packet Processing (flow-rule execution layer in SDN-WISE)" },
+    { abbr: "NFV", full: "Network Functions Virtualization" },
+    { abbr: "NOS", full: "Network Operating System" },
+    { abbr: "ONOS", full: "Open Network Operating System" },
+    { abbr: "OpenFlow", full: "Open standard communications protocol for SDN Southbound API" },
+    { abbr: "SDN", full: "Software-Defined Networking (separation of control and data planes)" },
+    { abbr: "SDN-WISE", full: "Software-Defined Networking for Wireless Sensor Networks" },
+    { abbr: "SSH", full: "Secure Shell" },
+    { abbr: "SSID", full: "Service Set Identifier (Wi-Fi network name)" },
+    { abbr: "STA", full: "Station (Wi-Fi client node mode)" },
+  ],
+  8: [
+    { abbr: "CIA", full: "Confidentiality, Integrity, and Availability (information security triad)" },
+    { abbr: "EC2", full: "Elastic Compute Cloud (Amazon IaaS compute platform)" },
+    { abbr: "IaaS", full: "Infrastructure as a Service" },
+    { abbr: "IAM", full: "Identity and Access Management" },
+    { abbr: "NIST", full: "National Institute of Standards and Technology (5 cloud characteristics)" },
+    { abbr: "PaaS", full: "Platform as a Service" },
+    { abbr: "QoE", full: "Quality of Experience" },
+    { abbr: "QoS", full: "Quality of Service" },
+    { abbr: "S3", full: "Simple Storage Service (Amazon object storage)" },
+    { abbr: "SaaS", full: "Software as a Service" },
+    { abbr: "SLA", full: "Service Level Agreement" },
+    { abbr: "VM", full: "Virtual Machine" },
+    { abbr: "VMM", full: "Virtual Machine Monitor (Hypervisor)" },
+  ],
+  9: [
+    { abbr: "Ceilometer", full: "OpenStack Telemetry and Metering Service" },
+    { abbr: "Cinder", full: "OpenStack Block Storage Service" },
+    { abbr: "CLI", full: "Command Line Interface" },
+    { abbr: "CoV-I", full: "Cloud of Virtual sensors Type I (homogeneous physical sensors in same region)" },
+    { abbr: "CoV-II", full: "Cloud of Virtual sensors Type II (heterogeneous physical sensors across multiple regions)" },
+    { abbr: "CSP", full: "Cloud Service Provider" },
+    { abbr: "Glance", full: "OpenStack Virtual Machine Disk Image Service" },
+    { abbr: "GUI", full: "Graphical User Interface" },
+    { abbr: "Heat", full: "OpenStack Orchestration Engine (template-based deployment)" },
+    { abbr: "Horizon", full: "OpenStack Dashboard Service (Web-based GUI)" },
+    { abbr: "Keystone", full: "OpenStack Identity and Authentication Service" },
+    { abbr: "Neutron", full: "OpenStack Software-Defined Networking Service" },
+    { abbr: "Nova", full: "OpenStack Compute Service (manages virtual machine instances)" },
+    { abbr: "SCSP", full: "Sensor-Cloud Service Provider" },
+    { abbr: "Se-aaS", full: "Sensing as a Service (also written SeaaS)" },
+    { abbr: "Swift", full: "OpenStack Object Storage Service" },
+    { abbr: "VM", full: "Virtual Machine" },
+    { abbr: "WSN", full: "Wireless Sensor Network" },
+  ],
+  10: [
+    { abbr: "CCN", full: "Content-Centric Networking (retrieves data by unique content name)" },
+    { abbr: "CS", full: "Content Store (caches content chunks locally in CCN)" },
+    { abbr: "DLNA", full: "Digital Living Network Alliance (media sharing standard)" },
+    { abbr: "DomoNet", full: "Domestic Network (centralized SOA smart home architecture)" },
+    { abbr: "DSRC", full: "Dedicated Short-Range Communications (75 MHz bandwidth at 5850–5925 MHz)" },
+    { abbr: "FIB", full: "Forwarding Information Base (CCN prefix-based forwarding table)" },
+    { abbr: "HAN", full: "Home Area Network" },
+    { abbr: "ICV", full: "Intelligent Connected Vehicle (connectivity + intelligent processing)" },
+    { abbr: "ICT", full: "Information and Communications Technology" },
+    { abbr: "ITS", full: "Intelligent Transportation Systems" },
+    { abbr: "Jini", full: "Java Intelligent Network Infrastructure (distributed middleware)" },
+    { abbr: "KNX", full: "Konnex (international standard for commercial and domestic home automation)" },
+    { abbr: "LonWorks", full: "Local Operating Network Works (Neuron chip building automation standard)" },
+    { abbr: "SAE", full: "Society of Automotive Engineers (SAE J2735 message sets, SAE J2945)" },
+    { abbr: "UPnP", full: "Universal Plug and Play (zero-configuration device discovery)" },
+    { abbr: "V2I", full: "Vehicle-to-Infrastructure" },
+    { abbr: "V2N", full: "Vehicle-to-Network" },
+    { abbr: "V2P", full: "Vehicle-to-Pedestrian / Vehicle-to-Person" },
+    { abbr: "V2V", full: "Vehicle-to-Vehicle" },
+    { abbr: "V2X", full: "Vehicle-to-Everything" },
+    { abbr: "VANET", full: "Vehicular Ad-hoc Network" },
+    { abbr: "WAVE", full: "Wireless Access in Vehicular Environments (IEEE 1609 standard family)" },
+    { abbr: "X-10", full: "Power-line communication standard for home automation" },
+  ],
+};
+
 /* ------------------------------------------------------------------ *
  * Read and split the raw notes into one clean block per week.
  * The raw file contains a second copy of weeks 5–10 and a misplaced
@@ -388,8 +584,9 @@ function chapterHtml(md, title = "") {
     /<p><strong>(Exam (?:trap|clue)|Remember|Important|Note|Common error|Exam focus|Exam shortcut):?<\/strong>\s*([\s\S]*?)<\/p>/gi,
     (_, label, body) => `<div class="callout tip"><strong>${label}:</strong> ${body}</div>`,
   );
-  // Keep every table scrollable on narrow screens.
-  html = html.replace(/<table>/g, '<div class="table-wrap"><table>').replace(/<\/table>/g, "</table></div>");
+  // Keep every table scrollable on narrow screens, preserving any custom class on the table.
+  html = html.replace(/<table(\s[^>]*)?>/g, (m, attrs) => `<div class="table-wrap"><table${attrs || ''}>`);
+  html = html.replace(/<\/table>/g, '</table></div>');
   // The source has many old ASCII tables. Give their leftover rules a class.
   html = html.replace(/<hr>/g, '<hr class="soft-rule">');
   return html;
@@ -440,8 +637,23 @@ for (let w = 1; w <= 10; w++) {
         terms: keyTerms(html),
       };
     })
-    .filter((c) => c.text.length > 0)
-    .map((c, ci) => ({ ...c, id: `w${w}-c${ci + 1}` }));
+    .filter((c) => c.text.length > 0);
+
+  const weekForms = WEEK_FULL_FORMS[w] || [];
+  if (weekForms.length) {
+    const rows = weekForms
+      .map((item) => `<tr><td>${escapeHtml(item.abbr)}</td><td>${escapeHtml(item.full)}</td></tr>`)
+      .join("\n");
+    const ffHtml = `<div class="table-wrap"><table class="ff-table">\n<thead><tr><th>Abbreviation</th><th>Full Form</th></tr></thead>\n<tbody>\n${rows}\n</tbody>\n</table></div>`;
+    chapters.push({
+      title: `Week ${w} — Key full forms and abbreviations`,
+      html: ffHtml,
+      text: plainText(ffHtml),
+      terms: weekForms.slice(0, 8).map((x) => x.abbr),
+    });
+  }
+
+  const numberedChapters = chapters.map((c, ci) => ({ ...c, id: `w${w}-c${ci + 1}` }));
 
   theory.push({
     id: `week-${w}`,
@@ -450,7 +662,7 @@ for (let w = 1; w <= 10; w++) {
     lectures: meta.lectures,
     intro: meta.intro,
     highlights: meta.highlights,
-    chapters,
+    chapters: numberedChapters,
   });
 }
 
