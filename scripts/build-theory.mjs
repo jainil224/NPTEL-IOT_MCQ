@@ -220,6 +220,50 @@ const WEEK_META = {
       "V2X advantages: reduced travel time, safety and bad-weather assistance; disadvantage: vehicle tracking/privacy.",
     ],
   },
+  11: {
+    title: "Smart Grid, IIoT, and Big Data Analytics",
+    lectures: "Week 11 · Lectures 51–55",
+    intro:
+      "This week introduces Smart Grids, the Industrial Internet of Things (IIoT), and Big Data analytics. A smart grid brings bidirectional energy and real-time communications to electrical networks; IIoT connects heavy machines and legacy plants using a wrap-and-reuse strategy; and Big Data systems such as Hadoop and HDFS store and analyze massive sensor streams.",
+    highlights: [
+      "Traditional grid = one-way centralized energy flow; Smart grid = bidirectional energy flow with two-way digital communication and automated control.",
+      "PMU (Phasor Measurement Unit) samples voltage and current waves with microsecond GPS time-synchronization; SCADA provides wide-area grid visibility.",
+      "A smart meter provides the digital interface between the consumer and the energy utility provider.",
+      "Time-of-Use (ToU) pricing charges higher rates during on-peak hours and lower rates during off-peak hours to incentivize load shifting.",
+      "Net Metering credits consumers for distributed solar energy fed back into the grid: Net Bill = Inflow (consumed) − Outflow (exported).",
+      "DAUs (Data Aggregator Units) aggregate and buffer local smart-meter data before forwarding it to the MDMS / Operation Centre.",
+      "Denial-of-Service (DoS) attacks flood smart grid networks and specifically compromise the Availability of grid components.",
+      "IIoT focuses on operational efficiency, safety, and zero downtime using extensive machine-to-machine (M2M) communication.",
+      "Wrap and Re-use retrofits existing legacy industrial machinery with modern IoT sensors and gateways rather than costly 'rip and replace'.",
+      "Wireless Sensor Networks (WSNs) in underground mines monitor toxic gases (CO, CH4, H2S) and seismic rock stability for worker safety.",
+      "Big Data in IoT is characterized by the 7Vs: Volume, Velocity, Variety, Variability, Veracity, Visualization, and Value.",
+      "Redundancy mitigation eliminates repeated identical sensor readings via detection, filtering, and compression.",
+      "HDFS NameNode stores and manages filesystem metadata; DataNodes store the actual data blocks across cluster machines.",
+    ],
+  },
+  12: {
+    title: "IoT Data Analytics, Agricultural Systems and Healthcare",
+    lectures: "Week 12 · Lectures 56–60",
+    intro:
+      "The final week covers statistical IoT data analytics and two major domain case studies: precision agriculture (AgriSens) and mobile healthcare (AmbuSens). It explains qualitative vs. quantitative analysis, ANOVA, Pearson's correlation, and continuous activity monitoring.",
+    highlights: [
+      "Qualitative analysis studies categorical/descriptive data (3 principles: Notice things, Collect things, Think about things).",
+      "Quantitative analysis studies numerical/measurable data using statistical methods, dispersion, and regression.",
+      "Complete model has variables equal to equations (Nvars = Neqs); Incomplete model has variables not equal to equations.",
+      "ANOVA (Analysis of Variance) is a hypothesis-testing method used to compare means across more than two sample groups/populations.",
+      "F-ratio in ANOVA is approximately 1 when the null hypothesis is true, and greater than 1 when the null hypothesis is false.",
+      "Pearson's correlation coefficient (r) measures linear association between two variables (−1 ≤ r ≤ +1); correlation does not imply causation.",
+      "AgriSens objective is 'More crop per drop' through precision irrigation and continuous soil-moisture monitoring.",
+      "AgriSens 3-layer architecture: Sensing/Actuating, Processing/Storage/Service, and Application layer.",
+      "AgriSens remote server uses GPRS and sends field condition summaries and irrigation control alerts to farmers via SMS.",
+      "IoT healthcare shifts medicine from reactive treatment to 24/7 preventive care, such as wearable fall detection for senior citizens.",
+      "AmbuSens uses a single-hop WBAN over Bluetooth (IEEE 802.15.1) to monitor ECG, heart rate, temperature, and GSR.",
+      "AmbuSens cloud framework protects patient privacy using identity-masking with cryptographic hashing and reverse hashing.",
+      "In-place activity monitoring processes sensor data locally on the smartphone/wearable (offline, instant, private, but high battery drain).",
+      "Network-based activity monitoring offloads processing to cloud servers (low device power, but requires continuous network connectivity).",
+      "Smartphone 3-axis accelerometer logging captures x, y, z acceleration forces to classify human activities (walking, running, sitting, standing).",
+    ],
+  },
 };
 
 const WEEK_FULL_FORMS = {
@@ -415,6 +459,56 @@ const WEEK_FULL_FORMS = {
     { abbr: "VANET", full: "Vehicular Ad-hoc Network" },
     { abbr: "WAVE", full: "Wireless Access in Vehicular Environments (IEEE 1609 standard family)" },
     { abbr: "X-10", full: "Power-line communication standard for home automation" },
+  ],
+  11: [
+    { abbr: "AMI", full: "Advanced Metering Infrastructure" },
+    { abbr: "DAU", full: "Data Aggregator Unit (aggregates meter readings locally in smart grids)" },
+    { abbr: "DCN", full: "Data Centre Network" },
+    { abbr: "DIA / FDIA", full: "Data Injection Attack / False Data Injection Attack" },
+    { abbr: "DoS", full: "Denial of Service (attack compromising Availability)" },
+    { abbr: "DSRC", full: "Dedicated Short-Range Communications" },
+    { abbr: "EV", full: "Electric Vehicle" },
+    { abbr: "GFS", full: "Google File System" },
+    { abbr: "HAN", full: "Home Area Network" },
+    { abbr: "HDFS", full: "Hadoop Distributed File System (NameNode + DataNodes)" },
+    { abbr: "HEMS", full: "Home Energy Management System" },
+    { abbr: "IIoT", full: "Industrial Internet of Things" },
+    { abbr: "ITS", full: "Intelligent Transportation Systems" },
+    { abbr: "M2M", full: "Machine-to-Machine" },
+    { abbr: "MDMS", full: "Meter Data Management System" },
+    { abbr: "NAN", full: "Neighborhood Area Network" },
+    { abbr: "PEV", full: "Plug-In Electric Vehicle" },
+    { abbr: "PMU", full: "Phasor Measurement Unit (microsecond GPS synchronized grid wave sensor)" },
+    { abbr: "SANET", full: "Sensor and Actuator Network" },
+    { abbr: "SCADA", full: "Supervisory Control and Data Acquisition" },
+    { abbr: "ToU", full: "Time-of-Use (electricity pricing tariff)" },
+    { abbr: "V2G", full: "Vehicle-to-Grid (bi-directional vehicle energy storage exchange)" },
+    { abbr: "V2R", full: "Vehicle-to-Road" },
+    { abbr: "V2V", full: "Vehicle-to-Vehicle" },
+    { abbr: "WAN", full: "Wide Area Network" },
+    { abbr: "WSN", full: "Wireless Sensor Network" },
+    { abbr: "YARN", full: "Yet Another Resource Negotiator (Hadoop resource manager)" },
+  ],
+  12: [
+    { abbr: "ANOVA", full: "Analysis of Variance (parametric test comparing means of >2 populations)" },
+    { abbr: "BLE", full: "Bluetooth Low Energy" },
+    { abbr: "CNN", full: "Convolutional Neural Network" },
+    { abbr: "ECG", full: "Electrocardiogram (cardiac electrical waveform monitoring)" },
+    { abbr: "EHR", full: "Electronic Health Record" },
+    { abbr: "GPRS", full: "General Packet Radio Service" },
+    { abbr: "GPS", full: "Global Positioning System" },
+    { abbr: "GSR", full: "Galvanic Skin Response (electrodermal activity measurement)" },
+    { abbr: "LSTM", full: "Long Short-Term Memory (recurrent deep learning network)" },
+    { abbr: "PDR", full: "Packet Delivery Ratio" },
+    { abbr: "PMU", full: "Power Management Unit (solar harvesting and battery management in AgriSens)" },
+    { abbr: "RF", full: "Radio Frequency" },
+    { abbr: "RNN", full: "Recurrent Neural Network" },
+    { abbr: "SD", full: "Standard Deviation" },
+    { abbr: "SMS", full: "Short Message Service" },
+    { abbr: "SST / TSS", full: "Total Sum of Squares (sum of squared deviations from grand mean in ANOVA)" },
+    { abbr: "SVM", full: "Support Vector Machine" },
+    { abbr: "WBAN", full: "Wireless Body Area Network (IEEE 802.15.1 Bluetooth body sensor network)" },
+    { abbr: "WSN", full: "Wireless Sensor Network" },
   ],
 };
 
@@ -622,7 +716,7 @@ function keyTerms(html) {
 }
 
 const theory = [];
-for (let w = 1; w <= 10; w++) {
+for (let w = 1; w <= 12; w++) {
   const meta = WEEK_META[w];
   const chapters = splitChapters(block(w))
     .map((c) => {
@@ -677,7 +771,7 @@ for (const week of theory) {
   }
 }
 const totalChapters = theory.reduce((n, w) => n + w.chapters.length, 0);
-if (theory.length !== 10) throw new Error("Expected 10 weeks");
+if (theory.length !== 12) throw new Error("Expected 12 weeks");
 
 fs.writeFileSync(
   outPath,
