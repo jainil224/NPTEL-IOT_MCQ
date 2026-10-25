@@ -49,17 +49,32 @@ function extractQuestions(text, weekNum) {
     if (options.length === 0) continue;
     
     // Determine correct answers
+    // Match standalone option letters: preceded by start/space/comma/punctuation, not embedded in words.
+    // e.g. "a, b, and c" → a, b, c (ignores the 'd' and 'a' inside "and")
+    const standaloneLetterRe = /(?:^|[^a-zA-Z])([a-dA-D])(?:[,\.\)\s]|$)/g;
+    function extractStandaloneLetters(str) {
+      const found = [];
+      const seen = new Set();
+      let m2;
+      const re = new RegExp(standaloneLetterRe.source, "g");
+      while ((m2 = re.exec(str)) !== null) {
+        const letter = m2[1].toLowerCase();
+        if (!seen.has(letter)) { found.push(letter); seen.add(letter); }
+      }
+      return found;
+    }
+
     const correctAnswers = [];
-    if (/[a-dA-D]\s*,\s*[a-dA-D]/.test(correctLine)) {
-      const letters = correctLine.match(/[a-dA-D]/g);
-      if (letters) {
-        const seen = new Set();
-        for (const letter of letters) {
-          const idx = letter.toLowerCase().charCodeAt(0) - 97;
-          if (idx >= 0 && idx < options.length && !seen.has(idx)) {
-            correctAnswers.push(idx);
-            seen.add(idx);
-          }
+    // Check if multiple answers (comma-separated or contains "and" between letters)
+    const isMultiLine = /[a-dA-D]\s*,\s*[a-dA-D]|[a-dA-D]\s+and\s+[a-dA-D]/i.test(correctLine);
+    if (isMultiLine) {
+      const letters = extractStandaloneLetters(correctLine);
+      const seen = new Set();
+      for (const letter of letters) {
+        const idx = letter.charCodeAt(0) - 97;
+        if (idx >= 0 && idx < options.length && !seen.has(idx)) {
+          correctAnswers.push(idx);
+          seen.add(idx);
         }
       }
     } else {

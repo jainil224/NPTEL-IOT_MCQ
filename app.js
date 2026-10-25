@@ -470,12 +470,20 @@
         let box = "";
         if (isMulti) {
           const isPending = pendingSel && pendingSel.has(oi);
-          box = `<span class="opt-box">${isPending ? "✓" : ""}</span>`;
-          if (isPending) cls += " selected";
+          const wasChosen = done && (Array.isArray(chosen) ? chosen.includes(oi) : false);
+          const isCorrect = correctArr.includes(oi);
+          const boxChar = done
+            ? (wasChosen ? "✓" : (isCorrect ? "○" : ""))
+            : (isPending ? "✓" : "");
+          box = `<span class="opt-box">${boxChar}</span>`;
+          if (isPending && !done) cls += " selected";
         }
         if (done || showAll) {
-          if (correctArr.includes(oi)) cls = " right";
-          else if (done && (Array.isArray(chosen) ? chosen.includes(oi) : oi === chosen)) cls = " wrong";
+          const wasChosen = Array.isArray(chosen) ? chosen.includes(oi) : oi === chosen;
+          const isCorrect = correctArr.includes(oi);
+          if (wasChosen && isCorrect) cls = " right";
+          else if (wasChosen && !isCorrect) cls = " wrong";
+          else if (!wasChosen && isCorrect) cls = " missed";
         }
         html += `<button class="opt${cls}" data-o="${oi}">${box}<b>${"ABCD"[oi]}.</b><span>${esc(o)}</span></button>`;
       });
@@ -759,9 +767,12 @@
           const oi = Number(el.dataset.o);
           el.classList.remove("selected");
           const box = el.querySelector(".opt-box");
-          if (box) box.textContent = chosenArr.includes(oi) ? "✓" : "";
-          if (correctArr.includes(oi)) el.classList.add("right");
-          else if (chosenArr.includes(oi)) el.classList.add("wrong");
+          const wasChosen = chosenArr.includes(oi);
+          const isCorrect = correctArr.includes(oi);
+          if (box) box.textContent = wasChosen ? "✓" : (isCorrect ? "○" : "");
+          if (wasChosen && isCorrect) el.classList.add("right");       // chosen correctly ✓
+          else if (wasChosen && !isCorrect) el.classList.add("wrong"); // chosen wrongly ✗
+          else if (!wasChosen && isCorrect) el.classList.add("missed"); // correct but missed
         });
         updateStatsNptel(out.querySelectorAll(".q").length);
         return;
@@ -811,10 +822,14 @@
         saveJSON(NPTEL_KEY, nptelProg);
       }
       card.classList.add("done");
-      const correctArr = Array.isArray(q.answer) ? q.answer : [q.answer];
-      card.querySelectorAll(".opt").forEach((el, i) => {
-        if (correctArr.includes(i)) el.classList.add("right");
-        else if (Number(el.dataset.o) === (Array.isArray(nptelProg[id]) ? nptelProg[id][0] : nptelProg[id])) el.classList.add("wrong");
+      const correctArr2 = Array.isArray(q.answer) ? q.answer : [q.answer];
+      card.querySelectorAll(".opt").forEach((el) => {
+        const oi = Number(el.dataset.o);
+        const isCorrect = correctArr2.includes(oi);
+        const wasChosen = oi === (Array.isArray(nptelProg[id]) ? nptelProg[id][0] : nptelProg[id]);
+        if (wasChosen && isCorrect) el.classList.add("right");
+        else if (wasChosen && !isCorrect) el.classList.add("wrong");
+        else if (!wasChosen && isCorrect) el.classList.add("missed");
       });
       updateStatsNptel(out.querySelectorAll(".q").length);
       return;

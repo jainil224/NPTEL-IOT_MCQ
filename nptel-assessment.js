@@ -336,13 +336,11 @@ window.NPTEL_ASSESSMENT = [
         "answer": [
           0,
           1,
-          3,
           2
         ],
         "answers": [
           0,
           1,
-          3,
           2
         ],
         "explanation": "Secure MQTT (SMQTT) adds security-related steps to MQTT communication. The assignment describes its four main stages as setup, encryption, publish, and decryption. Route discovery is not listed as one of these stages.\nWhy these options are correct:\nOptions (a), (b), and (c) are stages listed among the choices. Option (d) is not an SMQTT stage in the provided assignment.",
@@ -435,13 +433,11 @@ window.NPTEL_ASSESSMENT = [
         "answer": [
           0,
           1,
-          3,
           2
         ],
         "answers": [
           0,
           1,
-          3,
           2
         ],
         "explanation": "The assignment describes three main AMQP components:\n- Exchange: receives messages and routes them.\n- Queue: stores messages until consumers or business processes use them.\n- Binding: defines the rules that connect an exchange to queues and determine message distribution.\nA consumer does not route every message before it reaches the exchange.\nWhy these options are correct:\nOptions (a), (b), and (c) describe the AMQP components correctly. Option (d) is incorrect.",
@@ -519,13 +515,11 @@ window.NPTEL_ASSESSMENT = [
         "answer": [
           0,
           1,
-          3,
           2
         ],
         "answers": [
           0,
           1,
-          3,
           2
         ],
         "explanation": "A ZigBee end device communicates through its parent node, such as a router or coordinator. It does not relay messages for other devices and is considered a reduced-functionality device. The coordinator forms the network root and may act as the trust center.\nWhy these options are correct:\nOptions (a), (b), and (c) describe a ZigBee end device. Option (d) describes a coordinator's role, not an end device's role.",
@@ -541,12 +535,16 @@ window.NPTEL_ASSESSMENT = [
           "Both 16-bit and 64-bit addresses are globally unique and assigned by an Internet router.",
           "Both address types are used only for multicast communication."
         ],
-        "answer": 1,
+        "answer": [
+          1,
+          0
+        ],
         "answers": [
-          1
+          1,
+          0
         ],
         "explanation": "6LoWPAN enables IPv6 communication over low-power wireless personal area networks. The assignment describes two address types:\n- 16-bit short address: used within a particular PAN (Personal Area Network) and assigned by the PAN coordinator.\n- 64-bit extended address: globally unique.",
-        "multiple": false
+        "multiple": true
       },
       {
         "id": "nptel-w2-q14",
