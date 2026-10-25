@@ -45,6 +45,7 @@
   let showAll = false;
   let pendingChapter = null;
   let searchTimer = null;
+  const pendingMultiSelections = new Map();
 
   const openChapters = new Set(Array.isArray(ui.open) ? ui.open : []);
 
@@ -461,15 +462,27 @@
       const done = chosen !== undefined;
       const isMulti = Array.isArray(q.answer);
       const correctArr = isMulti ? q.answer : [q.answer];
-      html += `<div class="q${done ? " done" : ""}" data-id="${id}" data-nptel="1"><div class="topic-head"><p style="margin:0;font-weight:700">Q${q.qnum}. ${esc(q.q)}</p><button class="nptel-read-theory" data-action="nptel-read-theory" data-qid="${id}">Read theory</button></div>`;
+      const pendingSel = isMulti && !done ? (pendingMultiSelections.get(id) || new Set()) : null;
+      const multiBadge = isMulti ? ` <span class="multi-badge">Multiple Choice</span>` : "";
+      html += `<div class="q${done ? " done" : ""}" data-id="${id}" data-nptel="1" data-multi="${isMulti ? "1" : "0"}"><div class="topic-head"><p style="margin:0;font-weight:700">Q${q.qnum}. ${esc(q.q)}${multiBadge}</p><button class="nptel-read-theory" data-action="nptel-read-theory" data-qid="${id}">Read theory</button></div>`;
       q.options.forEach((o, oi) => {
         let cls = "";
+        let box = "";
+        if (isMulti) {
+          const isPending = pendingSel && pendingSel.has(oi);
+          box = `<span class="opt-box">${isPending ? "✓" : ""}</span>`;
+          if (isPending) cls += " selected";
+        }
         if (done || showAll) {
           if (correctArr.includes(oi)) cls = " right";
           else if (done && (Array.isArray(chosen) ? chosen.includes(oi) : oi === chosen)) cls = " wrong";
         }
-        html += `<button class="opt${cls}" data-o="${oi}"><b>${"ABCD"[oi]}.</b><span>${esc(o)}</span></button>`;
+        html += `<button class="opt${cls}" data-o="${oi}">${box}<b>${"ABCD"[oi]}.</b><span>${esc(o)}</span></button>`;
       });
+      if (isMulti && !done) {
+        const selCount = pendingSel ? pendingSel.size : 0;
+        html += `<div class="msq-submit-row"><button class="msq-submit-btn" data-action="submit-msq" data-qid="${id}" ${selCount === 0 ? "disabled" : ""}>Submit Answers</button><span class="msq-hint">${selCount === 0 ? "Select one or more options then submit" : `${selCount} option(s) selected`}</span></div>`;
+      }
       html += `<div class="ans"><b>Correct Answer: ${correctArr.map(i => "ABCD"[i]).join(", ")}</b></div></div>`;
     });
     out.innerHTML = html || '<div class="empty">No questions match your search.</div>';
@@ -720,6 +733,39 @@
         saveUI();
         return;
       }
+      if (action === "submit-msq") {
+        const qid = actionEl.dataset.qid;
+        const card = actionEl.closest(".q");
+        if (!card || nptelProg[qid] !== undefined) return;
+        const pending = pendingMultiSelections.get(qid);
+        if (!pending || pending.size === 0) return;
+        const nw = nptelWeekSel ? Number(nptelWeekSel.value) : 1;
+        const week = NPTEL_ASSESS.find(w => w.week === nw);
+        if (!week) return;
+        const q = week.questions.find(x => x.id === qid);
+        if (!q) return;
+
+        const chosenArr = Array.from(pending).sort((a,b)=>a-b);
+        nptelProg[qid] = chosenArr;
+        saveJSON(NPTEL_KEY, nptelProg);
+        pendingMultiSelections.delete(qid);
+
+        card.classList.add("done");
+        const submitRow = card.querySelector(".msq-submit-row");
+        if (submitRow) submitRow.remove();
+
+        const correctArr = Array.isArray(q.answer) ? q.answer : [q.answer];
+        card.querySelectorAll(".opt").forEach((el) => {
+          const oi = Number(el.dataset.o);
+          el.classList.remove("selected");
+          const box = el.querySelector(".opt-box");
+          if (box) box.textContent = chosenArr.includes(oi) ? "✓" : "";
+          if (correctArr.includes(oi)) el.classList.add("right");
+          else if (chosenArr.includes(oi)) el.classList.add("wrong");
+        });
+        updateStatsNptel(out.querySelectorAll(".q").length);
+        return;
+      }
     }
 
     const b = e.target.closest(".opt");
@@ -735,10 +781,31 @@
       const q = week.questions.find(x => x.id === id);
       if (!q) return;
       const isMulti = Array.isArray(q.answer);
+
       if (isMulti) {
-        // For MSQ, allow selecting multiple? The data shows arrays; just record selection for now
-        nptelProg[id] = [oi];
-        saveJSON(NPTEL_KEY, nptelProg);
+        // Toggle selection for multiple choice questions without immediately submitting
+        if (!pendingMultiSelections.has(id)) {
+          pendingMultiSelections.set(id, new Set());
+        }
+        const set = pendingMultiSelections.get(id);
+        if (set.has(oi)) {
+          set.delete(oi);
+          b.classList.remove("selected");
+          const box = b.querySelector(".opt-box");
+          if (box) box.textContent = "";
+        } else {
+          set.add(oi);
+          b.classList.add("selected");
+          const box = b.querySelector(".opt-box");
+          if (box) box.textContent = "✓";
+        }
+        const submitBtn = card.querySelector(".msq-submit-btn");
+        const hintEl = card.querySelector(".msq-hint");
+        if (submitBtn) submitBtn.disabled = set.size === 0;
+        if (hintEl) {
+          hintEl.textContent = set.size === 0 ? "Select one or more options then submit" : `${set.size} option(s) selected`;
+        }
+        return;
       } else {
         nptelProg[id] = oi;
         saveJSON(NPTEL_KEY, nptelProg);
@@ -840,6 +907,7 @@
     if (mode === "nptel") {
       if (!confirm("Clear your NPTEL Week Assessment answers?")) return;
       nptelProg = {};
+      pendingMultiSelections.clear();
       saveJSON(NPTEL_KEY, nptelProg);
       render();
       return;
