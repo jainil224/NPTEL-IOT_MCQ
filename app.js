@@ -728,12 +728,226 @@
     }
   ];
 
+  const EASY_WEEK_SUMMARIES = [
+    {
+      week: 1,
+      title: "Introduction to IoT, Sensors & Actuators",
+      lectures: "Lectures 1–5",
+      simpleWords: "IoT connects physical everyday objects (lights, fans, industrial machines, cars) to the internet so they can measure the environment, share data, and trigger actions automatically without human intervention.",
+      keyNotes: [
+        "<b>IoT System Architecture:</b> Real World → Sensor (measures) → Embedded Controller (processes) → Local Network → Gateway → Cloud/Backend → User App.",
+        "<b>Embedded System:</b> A dedicated micro-computer built into a machine to do one specific job (has limited CPU, memory, and power compared to a PC).",
+        "<b>Sensor vs. Actuator:</b> A <i>Sensor</i> is input (detects temperature, light, motion). An <i>Actuator</i> is output (physically moves a motor, opens a valve, or switches a light).",
+        "<b>Transducer:</b> Any device that converts one form of energy into another. Sensors and actuators are types of transducers.",
+        "<b>6 Types of Actuators:</b> Electrical (motors), Mechanical (gears), Hydraulic (uses pressurized liquid), Pneumatic (uses compressed air/gas), Thermal (uses heat), Magnetic (uses electromagnets).",
+        "<b>Accuracy vs. Precision:</b> Accuracy is how close you are to the true correct value. Precision is how consistently you get the same reading when measuring repeatedly.",
+        "<b>Resolution vs. Sensitivity:</b> Resolution is the smallest step or change a sensor can detect. Sensitivity is how much the sensor output changes when the input changes.",
+        "<b>Gateway vs. Proxy:</b> A <i>Gateway</i> works at the IP/network layer to route packets between LAN and WAN. A <i>Proxy</i> works at the Application layer to translate protocols and data formats."
+      ],
+      examTraps: [
+        "<b>High Resolution ≠ High Accuracy:</b> A digital thermometer showing 3 decimals (e.g. 24.125°C) has high resolution, but if the room is 30°C, it has very poor accuracy!",
+        "<b>Ultrasonic Distance Formula:</b> Distance = (Speed of Sound × Echo Round-Trip Time) ÷ 2. You MUST divide by 2 because the sound wave travels forward to the object and back again.",
+        "<b>Relay vs. Solenoid Valve:</b> A Relay is an electrically operated switch. A Solenoid Valve uses an electromagnet to open or close fluid/gas flow (like in smart irrigation)."
+      ],
+      formula: "Distance = (Speed × Time) ÷ 2 · IPv6 = 128 bits (IPv4 = 32 bits)"
+    },
+    {
+      week: 2,
+      title: "IoT Networking Protocols & Standards",
+      lectures: "Lectures 6–15",
+      simpleWords: "Constrained IoT sensors have tiny batteries and limited CPU, so normal heavy web protocols like HTTP are too slow and power-hungry. IoT uses special lightweight protocols like MQTT and CoAP to send small messages quickly.",
+      keyNotes: [
+        "<b>MQTT (Message Queue Telemetry Transport):</b> Lightweight publish-subscribe protocol running over <b>TCP/IP</b>. Created by IBM (1999) and standardized by OASIS (2013).",
+        "<b>How MQTT Works:</b> Publishers send messages to a <b>Topic</b> on a central <b>Broker</b>. The Broker forwards messages to all <b>Subscribers</b> interested in that topic. Publishers and subscribers never talk to each other directly.",
+        "<b>MQTT Wildcards:</b> <code>+</code> is single-level wildcard (matches e.g. <code>home/+/temp</code>). <code>#</code> is multi-level wildcard (matches everything after).",
+        "<b>CoAP (Constrained Application Protocol):</b> Lightweight REST-like request-response protocol designed specifically for constrained devices running over <b>UDP</b>.",
+        "<b>CoAP Methods:</b> <code>GET</code> (read), <code>POST</code> (create/process), <code>PUT</code> (update/replace), <code>DELETE</code> (remove).",
+        "<b>CoAP Message Types:</b> <i>CON</i> (Confirmable — receiver must send ACK back) vs. <i>NON</i> (Non-confirmable — fire and forget, no ACK needed).",
+        "<b>Piggyback vs. Separate Response:</b> Piggyback delivers the response data inside the ACK packet. Separate response sends the ACK first, and delivers data later in a second message.",
+        "<b>XMPP & AMQP:</b> XMPP is XML-based for instant messaging and presence. AMQP is a binary queued protocol over TCP using Exchanges, Bindings, and Queues.",
+        "<b>IEEE 802.15.4:</b> Defines the <b>PHY (Physical) and MAC (Medium Access)</b> layers for low-power wireless personal area networks (LR-WPAN). Uses CSMA/CA.",
+        "<b>ZigBee:</b> Sits on top of 802.15.4 and adds <b>Network and Application</b> layers. Roles: Coordinator (ZC), Router (ZR), End Device (ZED).",
+        "<b>6LoWPAN:</b> Header compression and fragmentation standard that shrinks big 128-bit IPv6 packets so they fit into small 127-byte 802.15.4 wireless packets.",
+        "<b>RPL (Routing Protocol for LLNs):</b> Distance-vector IPv6 routing protocol that builds a tree called a <b>DODAG</b> rooted at the gateway. Uses DIO, DAO, and DIS messages."
+      ],
+      examTraps: [
+        "<b>MQTT runs on TCP, CoAP runs on UDP:</b> This is the #1 most repeated NPTEL question!",
+        "<b>Confirmable/NON vs. Piggyback/Separate:</b> CON/NON is about acknowledgement. Piggyback/Separate is about HOW the response is carried.",
+        "<b>802.15.4 vs. ZigBee:</b> 802.15.4 is ONLY layers 1 & 2 (PHY + MAC). ZigBee provides the higher network/application layers."
+      ],
+      formula: "MQTT = TCP + Pub/Sub + Broker · CoAP = UDP + REST (GET/POST/PUT/DELETE)"
+    },
+    {
+      week: 3,
+      title: "Connectivity Technologies & Wireless Sensor Networks",
+      lectures: "Lectures 16–20",
+      simpleWords: "Covers the different wireless options to connect sensors (Wi-Fi, Bluetooth/BLE, Cellular, ZigBee) and how hundreds of tiny battery nodes organize into a Wireless Sensor Network (WSN).",
+      keyNotes: [
+        "<b>Bluetooth Low Energy (BLE):</b> Designed for ultra-low power consumption. Sleeps 99% of the time, wakes up quickly, sends a tiny packet, and sleeps again. Perfect for wearables and health monitors.",
+        "<b>Wi-Fi vs. BLE:</b> Wi-Fi offers high bandwidth and internet connectivity, but drains batteries very quickly. BLE offers low bandwidth but lasts months/years on a coin cell.",
+        "<b>Wireless Sensor Network (WSN):</b> A network of distributed autonomous sensor nodes that wirelessly pass measurements hop-by-hop toward a central <b>Base Station (Sink)</b>.",
+        "<b>WSN Node 4 Core Components:</b> 1) Sensing unit (sensor + ADC), 2) Processing unit (microcontroller + memory), 3) Transceiver (radio transmitter/receiver), 4) Power unit (battery).",
+        "<b>Top Priority in WSN:</b> Battery conservation is the single most critical design factor. Radio transmission takes 100x to 1000x more power than local calculation!"
+      ],
+      examTraps: [
+        "<b>Energy Consumption Trap:</b> In a sensor node, transmitting a single bit wirelessly uses vastly more energy than executing hundreds of CPU instructions.",
+        "<b>Star vs. Mesh:</b> Star topology is simple (all nodes talk to gateway directly). Mesh topology allows nodes to relay packets for each other across long distances."
+      ],
+      formula: "WSN Node = Sensor + Microcontroller + Transceiver + Battery"
+    },
+    {
+      week: 4,
+      title: "Sensor-Network Coverage, Mobility, UAV & M2M",
+      lectures: "Lectures 21–25",
+      simpleWords: "Explains how to place sensors so no area is left unmonitored, how moving networks (cars, drones) operate, and how industrial machines communicate without humans.",
+      keyNotes: [
+        "<b>Sensor Coverage Types:</b> 1) <i>Area Coverage</i> (monitor the entire region), 2) <i>Target/Point Coverage</i> (monitor specific fixed spots), 3) <i>Barrier Coverage</i> (detect intrusions across a boundary line).",
+        "<b>k-Coverage:</b> Every point in the area must be simultaneously seen by at least <i>k</i> distinct sensors (so if 1 sensor dies, others still cover the spot).",
+        "<b>Mobile Sensor Networks:</b> Nodes that move around. Includes <b>MANET</b> (Mobile Ad-hoc Networks) and <b>VANET</b> (Vehicular Ad-hoc Networks between moving cars).",
+        "<b>UAVs (Drones in IoT):</b> Can act as mobile aerial sensors or 'data mules' flying over remote ground sensors to collect stored data.",
+        "<b>M2M (Machine-to-Machine):</b> Automated communication between machines without human intervention, widely used in factory automation and smart meters."
+      ],
+      examTraps: [
+        "<b>Barrier Coverage:</b> Used specifically for perimeter security, border defense, and pipeline monitoring where crossing detection is needed, not 100% full area coverage.",
+        "<b>VANET Constraints:</b> Vehicles move at high speeds, so wireless link topology changes constantly in seconds."
+      ],
+      formula: "k-Coverage = Every point monitored by ≥ k sensors simultaneously"
+    },
+    {
+      week: 5,
+      title: "Interoperability, Arduino, Sensors & Actuators",
+      lectures: "Lectures 26–30",
+      simpleWords: "Explains how to make different IoT brands work together, and how to program microcontrollers like Arduino to read sensors and switch circuits.",
+      keyNotes: [
+        "<b>Interoperability:</b> The ability of hardware and software from different manufacturers to exchange information correctly. <i>Semantic interoperability</i> means both sides understand the exact meaning and units (e.g. Celsius vs Fahrenheit).",
+        "<b>Arduino Platform:</b> An open-source microcontroller board (such as Arduino Uno based on the 8-bit ATmega328P chip). It runs bare-metal C/C++ without an operating system.",
+        "<b>Arduino Code Structure:</b> Requires two functions: <code>setup()</code> (runs once at power-on to initialize pins) and <code>loop()</code> (repeats endlessly to read and act).",
+        "<b>Digital vs. Analog Pins:</b> Digital pins read/write binary <code>HIGH</code> (5V) or <code>LOW</code> (0V). Analog pins read varying voltages through a 10-bit ADC (converts 0–5V into numbers 0–1023).",
+        "<b>PWM (Pulse Width Modulation):</b> A technique to fake analog output using digital pins by switching 5V on and off thousands of times per second (controls motor speed and LED brightness)."
+      ],
+      examTraps: [
+        "<b>ADC Calculation:</b> A 10-bit ADC divides 5V into $2^{10} = 1024$ steps. Voltage = $(ADC\\text{ value} \\times 5.0) / 1023.0$.",
+        "<b>Arduino is NOT a computer:</b> Arduino is a microcontroller (executes one program, low clock speed ~16 MHz, no Linux, no display)."
+      ],
+      formula: "10-bit ADC Range = 0 to 1023 · PWM Duty Cycle = (Time ON / Total Time) × 100%"
+    },
+    {
+      week: 6,
+      title: "Python Programming & Raspberry Pi",
+      lectures: "Lectures 31–35",
+      simpleWords: "Introduces the Raspberry Pi—a complete $35 credit-card computer running Linux—and how to write Python scripts to interact with real-world electronics.",
+      keyNotes: [
+        "<b>Raspberry Pi:</b> A full Single Board Computer (SBC) built around a System on Chip (SoC) with an ARM processor, GPU, RAM, HDMI output, USB ports, Wi-Fi, Ethernet, and running Linux (Raspberry Pi OS).",
+        "<b>Arduino vs. Raspberry Pi (Big Difference):</b> Arduino is a low-power microcontroller (no OS, instant start, real-time sensor control). Raspberry Pi is a micro-computer (runs Linux, multi-tasking, runs Python, web servers, but needs safe shutdown and uses more power).",
+        "<b>Hardware Bus Interfaces:</b>",
+        "• <b>UART:</b> Asynchronous serial, 2 wires (TX transmit, RX receive), no clock wire.",
+        "• <b>I2C:</b> Synchronous, 2 wires (SDA data, SCL clock), supports multiple devices with unique addresses.",
+        "• <b>SPI:</b> Synchronous, 4 wires (MOSI, MISO, SCK clock, CS chip select), very fast full-duplex speed.",
+        "<b>Python GPIO:</b> Python uses libraries like <code>RPi.GPIO</code> to control physical pins. Must specify pin numbering: <code>GPIO.setmode(GPIO.BCM)</code> (by chip pin) or <code>GPIO.BOARD</code> (by physical pin number)."
+      ],
+      examTraps: [
+        "<b>3.3V Logic Warning:</b> Raspberry Pi GPIO pins operate strictly at 3.3V! Connecting a 5V sensor output directly will permanently burn the pin! Arduino uses 5V.",
+        "<b>Wire Count Clue:</b> UART = 2 wires, I2C = 2 wires, SPI = 4 wires."
+      ],
+      formula: "SPI = 4 wires (MOSI, MISO, SCK, CS) · I2C = 2 wires (SDA, SCL) · Logic = 3.3V"
+    },
+    {
+      week: 7,
+      title: "Raspberry Pi Networking & Software-Defined Networking (SDN)",
+      lectures: "Lectures 36–40",
+      simpleWords: "Networking your Raspberry Pi, and understanding Software-Defined Networking (SDN)—the modern way to control networks by separating the brain from the switches.",
+      keyNotes: [
+        "<b>Raspberry Pi Networking:</b> Connecting via Wi-Fi (`wpa_supplicant.conf`), SSH (Secure Shell on port 22 for headless control), and DHCP / static IP.",
+        "<b>The Problem with Traditional Networks:</b> Normal routers have the 'Brain' (Control Plane: deciding routing tables) and 'Muscle' (Data Plane: moving packets) tied together inside every box, making network changes slow and expensive.",
+        "<b>The SDN Solution:</b> Separate the Control Plane from the Data Plane!",
+        "• <b>Control Plane (Brain):</b> Centralized software controller decides routing rules for the entire network.",
+        "• <b>Data Plane (Muscle):</b> Cheap, simple switches simply forward packets according to rules sent from the controller.",
+        "<b>OpenFlow Protocol:</b> The open standard protocol used by the SDN Controller to program flow tables inside network switches (the <i>Southbound</i> interface).",
+        "<b>Mininet:</b> A standard network emulation tool used to create realistic virtual OpenFlow networks on a PC or Raspberry Pi."
+      ],
+      examTraps: [
+        "<b>Northbound vs. Southbound APIs:</b> Southbound API connects Controller to Switches (e.g. OpenFlow). Northbound API connects Controller to user software applications.",
+        "<b>Plane Roles:</b> Data plane = packet forwarding; Control plane = routing logic/decisions; Management plane = user configuration."
+      ],
+      formula: "SDN = Separate Control Plane (Brain) from Data Plane (Muscle) via OpenFlow"
+    },
+    {
+      week: 8,
+      title: "Advanced SDN & Cloud Computing",
+      lectures: "Lectures 41–45",
+      simpleWords: "Using SDN to handle complex IoT traffic, and understanding Cloud Computing—renting powerful servers over the internet instead of buying expensive hardware.",
+      keyNotes: [
+        "<b>5 NIST Cloud Characteristics (Must Memorize!):</b> 1) On-demand self-service, 2) Broad network access, 3) Resource pooling, 4) Rapid elasticity (instant scale up/down), 5) Measured service (pay-per-use).",
+        "<b>3 Cloud Service Models:</b>",
+        "• <b>IaaS (Infrastructure as a Service):</b> Rent virtual machines, storage, and networking (e.g. Amazon EC2). You install and manage the OS and apps.",
+        "• <b>PaaS (Platform as a Service):</b> Rent a ready programming runtime and databases (e.g. Google App Engine). You only write your app code.",
+        "• <b>SaaS (Software as a Service):</b> Ready-to-use software accessed through a browser (e.g. Gmail, Google Docs). The provider manages everything.",
+        "<b>Security CIA Triad:</b> <i>Confidentiality</i> (protecting data from unauthorized eyes via encryption), <i>Integrity</i> (ensuring data cannot be tampered with), <i>Availability</i> (ensuring services stay online when needed).",
+        "<b>Cloud Simulators:</b> <i>CloudSim</i> (Java-based framework for cloud modeling), <i>CloudAnalyst</i> (focuses on geographically distributed users), <i>GreenCloud</i> (focuses on cloud energy consumption)."
+      ],
+      examTraps: [
+        "<b>Customer Responsibility:</b> Highest in IaaS (customer manages OS, runtime, and data); lowest in SaaS (customer only uses the software).",
+        "<b>Cloud is NOT always cheaper:</b> For 24/7 steady heavy workloads, buying physical servers can sometimes cost less than cloud hourly billing."
+      ],
+      formula: "5 NIST Traits = Self-Service + Network Access + Pooling + Elasticity + Measured"
+    },
+    {
+      week: 9,
+      title: "OpenStack, Sensor-Cloud & Fog Computing",
+      lectures: "Lectures 46–50",
+      simpleWords: "Building your own cloud with OpenStack, renting sensors as a service (Sensor-Cloud), and Fog Computing—doing calculations close to the device so there is no cloud delay.",
+      keyNotes: [
+        "<b>OpenStack:</b> Open-source software suite for building private and public clouds.",
+        "• <b>Nova:</b> Compute (creates and manages virtual machines).",
+        "• <b>Swift & Cinder:</b> Swift = Object storage; Cinder = Block storage (VM hard drives).",
+        "• <b>Neutron:</b> Networking (virtual switches, subnets, routers, floating IPs).",
+        "• <b>Glance:</b> Disk image storage (OS templates like Ubuntu, Debian).",
+        "• <b>Keystone:</b> Authentication and Identity service.",
+        "• <b>Horizon:</b> Web-based GUI dashboard.",
+        "<b>Sensor-Cloud (Se-aaS):</b> Virtualizes physical sensor networks so multiple different applications can subscribe to and share sensor data as a cloud service.",
+        "• <b>CoV-I:</b> Grouping homogeneous sensors in the same geographic region.",
+        "• <b>CoV-II:</b> Grouping heterogeneous sensors spread across multiple regions.",
+        "<b>Fog Computing:</b> Extends cloud services to the local network edge near devices. Why? The cloud is too far away and introduces 200–500 ms lag. Fog computing makes critical decisions locally in milliseconds!"
+      ],
+      examTraps: [
+        "<b>Fog Latency Formula:</b> Total Latency = Time(device to cloud) + Time(cloud analysis) + Time(cloud to device). Example: 180 ms + 40 ms + 130 ms = 350 ms.",
+        "<b>DevStack Commands:</b> <code>./stack.sh</code> starts the installation; <code>./unstack.sh</code> cleans up and stops it."
+      ],
+      formula: "Nova = Compute · Neutron = Network · Swift = Object · Cinder = Block · Fog = Low Latency"
+    },
+    {
+      week: 10,
+      title: "Smart Cities, Data Fusion, Smart Homes & Connected Vehicles",
+      lectures: "Lectures 51–55",
+      simpleWords: "Real-world smart applications: Smart Cities using the human body analogy, merging multiple sensor readings into one truth (Data Fusion), Home Automation, and Connected Vehicles (V2X).",
+      keyNotes: [
+        "<b>Smart City Human-Body Analogy (Exam Favorite!):</b>",
+        "• Sensory Organs = Sensors (measure traffic, pollution, water).",
+        "• Nerves = Communication Networks (Wi-Fi, 4G/5G, fiber optic).",
+        "• Brain = Embedded Intelligence & Cloud Processing.",
+        "• Organs = City Services (healthcare, water, power, sanitation).",
+        "• Skeleton = Physical Buildings and Infrastructure.",
+        "<b>6 Smart City Dimensions:</b> Economy, Governance, People, Mobility, Environment, Living.",
+        "<b>Data Fusion:</b> Combining data from multiple sensors to achieve higher accuracy and confidence than any single sensor alone.",
+        "• <b>3 Fusion Levels:</b> 1) <i>Pixel Level</i> (raw sensor data fused), 2) <i>Feature Level</i> (extracted traits fused), 3) <i>Decision Level</i> (high-level decisions combined).",
+        "<b>Smart Home Protocols (HAN):</b> UPnP (zero-config device discovery), DLNA (media streaming), KNX & LonWorks (building automation), ZigBee (low-power smart devices), X-10 (signals over AC power lines).",
+        "<b>Connected Vehicles (V2X):</b> V2V (Vehicle-to-Vehicle for crash prevention), V2I (Vehicle-to-Infrastructure for traffic lights/tolls), V2P (Vehicle-to-Pedestrian).",
+        "<b>DSRC (Dedicated Short-Range Communications):</b> Standard wireless technology for connected cars. Uses <b>75 MHz of spectrum</b> in the <b>5.9 GHz band</b> (5.850 to 5.925 GHz). Governed by <b>IEEE 802.11p</b> and <b>IEEE 1609</b>."
+      ],
+      examTraps: [
+        "<b>DSRC Frequency and Bandwidth:</b> Bandwidth is <b>75 MHz</b>, frequency is <b>5.9 GHz</b> (5850–5925 MHz). This is asked in almost every NPTEL final exam!",
+        "<b>Data Fusion Hierarchy:</b> Pixel Level (lowest/raw) → Feature Level → Decision Level (highest abstraction)."
+      ],
+      formula: "DSRC = 75 MHz (5.9 GHz) · V2X = V2V + V2I + V2P · Body Analogy: Nerves = Networks"
+    }
+  ];
+
   function renderRevision(term) {
     const fullForms = getMasterFullForms();
 
     let html = `<div class="hero">
       <h2>📚 NPTEL IoT Quick Revision Hub</h2>
-      <p class="sub">Two comprehensive revision options: Consolidated 1–10 Week Summaries with High-Yield Exam Topics, or the Master Glossary of 165+ Full Forms at once.</p>
+      <p class="sub">Two comprehensive revision options: Consolidated 1–10 Week Summaries in Easy Language with High-Yield Exam Topics, or the Master Glossary of 165+ Full Forms at once.</p>
     </div>`;
 
     // 2 Option Cards
@@ -742,9 +956,9 @@
         <span class="roc-icon">📋</span>
         <div>
           <h3>Option 1: All 1–10 Week Summaries &amp; Exam IMP Topics</h3>
-          <p>Consolidated lecture summaries, core exam highlights, key terms, and 10 high-yield topics frequently tested in NPTEL exams.</p>
+          <p>Consolidated lecture summaries in easy and simple language, core exam highlights, key terms, and 10 high-yield topics frequently tested in NPTEL exams.</p>
         </div>
-        <span class="roc-badge">High-Yield Exam Prep</span>
+        <span class="roc-badge">Easy Language &amp; High-Yield</span>
       </div>
       <div class="rev-option-card${revView === "fullforms" ? " active" : ""}" data-action="rev-switch-view" data-view="fullforms">
         <span class="roc-icon">🔤</span>
@@ -796,60 +1010,66 @@
         html += `<div class="empty" style="margin-bottom:20px">No IMP topics match "${esc(term)}".</div>`;
       }
 
-      // Section B: All 1-10 Week Summaries & Important Notes
+      // Section B: All 1-10 Week Summaries & Important Notes (Easy Language)
       html += `<div class="rev-section-title">
         <span>📖 All 1–10 Week Consolidated Summaries &amp; Important Notes</span>
-        <span class="rs-pill">Weeks 1–10</span>
+        <span class="rs-pill">Easy &amp; Simple Language</span>
       </div>`;
 
       // Week filter bar + expand/collapse controls
       html += `<div class="rev-filter-bar">
         <span style="font-size:.82rem;font-weight:700;color:var(--fg);margin-right:4px">Filter Week:</span>
         <button class="rev-filter-btn${revFilterWeek === "all" ? " active" : ""}" data-action="rev-filter-week" data-week="all">All Weeks (1–10)</button>
-        ${THEORY.map(w => `<button class="rev-filter-btn${revFilterWeek === String(w.week) ? " active" : ""}" data-action="rev-filter-week" data-week="${w.week}">W${w.week}</button>`).join("")}
+        ${EASY_WEEK_SUMMARIES.map(w => `<button class="rev-filter-btn${revFilterWeek === String(w.week) ? " active" : ""}" data-action="rev-filter-week" data-week="${w.week}">W${w.week}</button>`).join("")}
         <div style="margin-left:auto;display:flex;gap:6px">
           <button class="ghost" data-action="rev-expand-all" style="font-size:.78rem;padding:3px 8px">▾ Expand All</button>
           <button class="ghost" data-action="rev-collapse-all" style="font-size:.78rem;padding:3px 8px">▴ Collapse All</button>
         </div>
       </div>`;
 
-      let weeksToShow = THEORY;
+      let weeksToShow = EASY_WEEK_SUMMARIES;
       if (revFilterWeek !== "all") {
         const targetW = Number(revFilterWeek);
-        weeksToShow = THEORY.filter(w => w.week === targetW);
+        weeksToShow = EASY_WEEK_SUMMARIES.filter(w => Number(w.week) === targetW);
       }
       if (term) {
         weeksToShow = weeksToShow.filter(w => 
-          (w.title + " " + w.intro + " " + w.highlights.join(" ")).toLowerCase().includes(term)
+          (w.title + " " + w.simpleWords + " " + w.keyNotes.join(" ") + " " + w.examTraps.join(" ") + " " + w.formula).toLowerCase().includes(term)
         );
       }
 
       if (weeksToShow.length > 0) {
         weeksToShow.forEach(w => {
-          const isRead = readCount(w);
+          const rawW = THEORY.find(x => x.week === Number(w.week));
+          const isRead = rawW ? readCount(rawW) : 0;
+          const totalCh = rawW ? rawW.chapters.length : 0;
           html += `<details class="rev-week-block" open>
             <summary>
               <span class="rwb-week-num">${w.week}</span>
-              <span style="color:var(--fg)">Week ${w.week}: ${esc(w.title)}</span>
+              <span style="color:var(--fg);font-weight:700">Week ${w.week}: ${esc(w.title)}</span>
               <span style="font-size:.78rem;color:var(--mut);font-weight:500;margin-left:8px">${esc(w.lectures)}</span>
-              <span style="font-size:.74rem;color:var(--ok);margin-left:auto;margin-right:12px;font-weight:600">${isRead}/${w.chapters.length} read</span>
+              <span style="font-size:.74rem;color:var(--ok);margin-left:auto;margin-right:12px;font-weight:600">${isRead}/${totalCh} read</span>
             </summary>
             <div class="rev-week-body">
-              <div class="rev-week-intro">
-                <b style="color:var(--acc2)">Executive Summary:</b> ${esc(w.intro)}
+              <div class="rev-simple-box">
+                <b class="rsb-tag">🎯 In Simple Words (The Big Picture):</b>
+                ${esc(w.simpleWords)}
               </div>
-              <div>
-                <b style="font-size:.88rem;color:var(--fg);display:block;margin-bottom:8px">⭐ Key Exam Highlights &amp; Notes:</b>
+              <div style="margin-bottom:14px">
+                <b style="font-size:.88rem;color:var(--fg);display:block;margin-bottom:8px">⚡ Key Concepts &amp; Important Notes (Easy Language):</b>
                 <ul class="rev-highlights-list">
-                  ${w.highlights.map(h => `<li>${esc(h)}</li>`).join("")}
+                  ${w.keyNotes.map(n => `<li>${n}</li>`).join("")}
                 </ul>
               </div>
-              <div class="rev-terms-row">
-                <span style="font-size:.76rem;color:var(--mut);font-weight:700;align-self:center;margin-right:4px">Key Terms:</span>
-                ${w.chapters.slice(0, 4).flatMap(c => c.terms || []).slice(0, 10).map(t => `<span class="rev-term">${esc(t)}</span>`).join("")}
+              <div class="rev-trap-box">
+                <b class="rtb-tag">⚠️ Common NPTEL Exam Traps &amp; Tricks:</b>
+                <ul style="margin:0;padding-left:18px">
+                  ${w.examTraps.map(tr => `<li style="margin:3px 0">${tr}</li>`).join("")}
+                </ul>
               </div>
-              <div>
-                <button class="rev-nav-btn" data-action="open-week" data-week="${w.week - 1}">Open Full Week ${w.week} Theory →</button>
+              <div style="margin-top:10px;display:flex;align-items:center;flex-wrap:wrap;gap:10px;justify-content:space-between">
+                <div class="rev-formula-pill">💡 ${esc(w.formula)}</div>
+                <button class="rev-nav-btn" data-action="open-week" data-week="${Number(w.week) - 1}">Open Full Week ${w.week} Theory →</button>
               </div>
             </div>
           </details>`;
