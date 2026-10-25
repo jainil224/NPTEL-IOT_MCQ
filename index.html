@@ -4,14 +4,20 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>IoT (NPTEL) Study Guide</title>
+<script>
+(function(){try{var t=localStorage.getItem("iot-theme");if(t==="dark"||t==="light"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}})();
+</script>
 <style>
-:root{--bg:#fff;--fg:#111;--mut:#5f6368;--line:#dadce0;--card:#f6f7f9;--ok:#137333;--okbg:#e6f4ea;--bad:#b3261e;--badbg:#fce8e6;--acc:#111;--acc2:#1a73e8;--warn:#8a5a00;--warnbg:#fff7e0;--notebg:#eef4ff}
-@media (prefers-color-scheme:dark){:root{--bg:#121212;--fg:#eee;--mut:#a0a4a8;--line:#333;--card:#1c1c1e;--ok:#81c995;--okbg:#14301d;--bad:#f28b82;--badbg:#3a1b19;--acc:#eee;--acc2:#8ab4f8;--warn:#fdd663;--warnbg:#2d2717;--notebg:#17202f}}
+:root{--bg:#fff;--fg:#111;--mut:#5f6368;--line:#dadce0;--card:#f6f7f9;--ok:#137333;--okbg:#e6f4ea;--bad:#b3261e;--badbg:#fce8e6;--acc:#111;--acc2:#1a73e8;--warn:#8a5a00;--warnbg:#fff7e0;--notebg:#eef4ff;--header-bg:rgba(255,255,255,.88);--header-shadow:0 4px 20px -2px rgba(0,0,0,.04);--highlight-bg:linear-gradient(transparent 62%,rgba(255,214,10,.32) 62%);--highlight-shadow:inset 0 0 0 1px rgba(245,183,0,.25);color-scheme:light}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){--bg:#121212;--fg:#eee;--mut:#a0a4a8;--line:#333;--card:#1c1c1e;--ok:#81c995;--okbg:#14301d;--bad:#f28b82;--badbg:#3a1b19;--acc:#eee;--acc2:#8ab4f8;--warn:#fdd663;--warnbg:#2d2717;--notebg:#17202f;--header-bg:rgba(18,18,18,.86);--header-shadow:0 4px 20px -2px rgba(0,0,0,.4);--highlight-bg:linear-gradient(transparent 62%,rgba(255,214,10,.18) 62%);--highlight-shadow:inset 0 0 0 1px rgba(245,183,0,.35);color-scheme:dark}
+}
+html[data-theme="dark"]{--bg:#121212;--fg:#eee;--mut:#a0a4a8;--line:#333;--card:#1c1c1e;--ok:#81c995;--okbg:#14301d;--bad:#f28b82;--badbg:#3a1b19;--acc:#eee;--acc2:#8ab4f8;--warn:#fdd663;--warnbg:#2d2717;--notebg:#17202f;--header-bg:rgba(18,18,18,.86);--header-shadow:0 4px 20px -2px rgba(0,0,0,.4);--highlight-bg:linear-gradient(transparent 62%,rgba(255,214,10,.18) 62%);--highlight-shadow:inset 0 0 0 1px rgba(245,183,0,.35);color-scheme:dark}
+html[data-theme="light"]{--bg:#fff;--fg:#111;--mut:#5f6368;--line:#dadce0;--card:#f6f7f9;--ok:#137333;--okbg:#e6f4ea;--bad:#b3261e;--badbg:#fce8e6;--acc:#111;--acc2:#1a73e8;--warn:#8a5a00;--warnbg:#fff7e0;--notebg:#eef4ff;--header-bg:rgba(255,255,255,.88);--header-shadow:0 4px 20px -2px rgba(0,0,0,.04);--highlight-bg:linear-gradient(transparent 62%,rgba(255,214,10,.32) 62%);--highlight-shadow:inset 0 0 0 1px rgba(245,183,0,.25);color-scheme:light}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
-body > header{position:sticky;top:0;z-index:100;background:rgba(255,255,255,.88);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:10px 20px;box-shadow:0 4px 20px -2px rgba(0,0,0,.04);transition:background .2s}
-@media (prefers-color-scheme:dark){body > header{background:rgba(18,18,18,.86);box-shadow:0 4px 20px -2px rgba(0,0,0,.4)}}
+body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;transition:background-color .2s,color .2s}
+body > header{position:sticky;top:0;z-index:100;background:var(--header-bg);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:10px 20px;box-shadow:var(--header-shadow);transition:background .2s,border-color .2s}
 .nptel-theory-card{border:1px solid var(--line);border-radius:12px;margin:0 0 16px;background:var(--bg);overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.04)}
 .nptel-theory-head{position:static;z-index:auto;padding:12px 18px;background:var(--card);border-bottom:1px solid var(--line);box-shadow:none}
 .nptel-theory-head h3{margin:4px 0 0;font-size:1.05rem;line-height:1.4}
@@ -144,12 +150,18 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 .ff-table td:first-child{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;font-weight:750;color:var(--acc2);white-space:nowrap;width:140px;letter-spacing:.02em}
 .ff-table td:nth-child(2){font-weight:500}
 .ascii-table{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-size:.82rem;line-height:1.6;overflow-x:auto;white-space:pre;margin:10px 0}
+.theme-btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;font-size:.84rem;font-weight:600;padding:6px 12px;border-radius:9px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;transition:all .15s ease}
+.theme-btn:hover{background:var(--card);border-color:var(--acc2);transform:translateY(-1px);box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.theme-btn:active{transform:translateY(0)}
+.theme-btn .theme-icon{font-size:.95rem;line-height:1}
 @media (max-width: 680px){
   body > header{padding:8px 10px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
   main{padding:10px 8px}
-  .bar{display:grid;grid-template-columns:1fr auto;gap:6px 6px;align-items:center}
-  h1{grid-column:1 / 2;font-size:.96rem;margin:0;line-height:1.2}
-  #reset{grid-column:2 / 3;padding:4px 8px;font-size:.78rem;height:28px}
+  .bar{display:grid;grid-template-columns:1fr auto auto;gap:6px 6px;align-items:center}
+  h1{grid-column:1 / 2;grid-row:1;font-size:.96rem;margin:0;line-height:1.2}
+  #theme-toggle{grid-column:2 / 3;grid-row:1;padding:4px 8px;font-size:.82rem;height:28px}
+  #reset{grid-column:3 / 4;grid-row:1;padding:4px 8px;font-size:.78rem;height:28px}
+  .theme-btn .theme-label{display:none}
   #toggle{grid-column:1 / -1;padding:5px 8px;font-size:.8rem}
   .tabs{grid-column:1 / -1;width:100%;display:flex;padding:2px;gap:2px}
   .tabs .tab{flex:1;text-align:center;padding:5px 6px;font-size:.78rem;white-space:nowrap}
@@ -205,6 +217,7 @@ h3{font-size:1.05rem;margin:24px 0 6px}
 </div>
 <input id="search" type="search" placeholder="Search theory…" aria-label="Search">
 <button id="toggle" hidden>Show all answers</button>
+<button id="theme-toggle" class="theme-btn" aria-label="Toggle light and dark mode" title="Toggle theme"><span class="theme-icon">🌙</span><span class="theme-label">Dark</span></button>
 <button id="reset">Reset</button>
 </div></header>
 <main>
@@ -217,7 +230,7 @@ const DATA = [{"title":"WEEK 1 — Introduction to IoT","topics":[{"title":"1. W
 <script src="theory.js?v=4"></script>
 <script src="nptel-assessment.js?v=4"></script>
 <script src="nptel-theory.js?v=4"></script>
-<script src="app.js?v=4"></script>
+<script src="app.js?v=5"></script>
 </body>
 </html>
 

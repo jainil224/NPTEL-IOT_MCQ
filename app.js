@@ -20,9 +20,44 @@
   const search = document.getElementById("search");
   const stats = document.getElementById("stats");
   const toggleBtn = document.getElementById("toggle");
+  const themeToggleBtn = document.getElementById("theme-toggle");
   const tabTheory = document.getElementById("tab-theory");
   const tabMcq = document.getElementById("tab-mcq");
   const tabNptel = document.getElementById("tab-nptel");
+  const THEME_KEY = "iot-theme";
+
+  function getSystemTheme() {
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  }
+
+  function getActiveTheme() {
+    const explicit = document.documentElement.getAttribute("data-theme");
+    if (explicit === "dark" || explicit === "light") return explicit;
+    try {
+      const stored = localStorage.getItem(THEME_KEY);
+      if (stored === "dark" || stored === "light") return stored;
+    } catch (e) {}
+    return getSystemTheme();
+  }
+
+  function updateThemeUI(currentTheme) {
+    if (!themeToggleBtn) return;
+    const isDark = currentTheme === "dark";
+    const icon = themeToggleBtn.querySelector(".theme-icon");
+    const label = themeToggleBtn.querySelector(".theme-label");
+    if (icon) icon.textContent = isDark ? "☀️" : "🌙";
+    if (label) label.textContent = isDark ? "Light" : "Dark";
+    themeToggleBtn.setAttribute("title", isDark ? "Switch to Light mode" : "Switch to Dark mode");
+    themeToggleBtn.setAttribute("aria-label", isDark ? "Switch to Light mode" : "Switch to Dark mode");
+  }
+
+  function setTheme(theme, save = true) {
+    document.documentElement.setAttribute("data-theme", theme);
+    if (save) {
+      try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+    }
+    updateThemeUI(theme);
+  }
 
   const loadJSON = (key, fallback) => {
     try {
@@ -953,6 +988,31 @@
     setMode(mode);
     render();
   });
+
+  // Initialize light/dark theme toggle
+  const initialTheme = getActiveTheme();
+  setTheme(initialTheme, false);
+
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener("click", () => {
+      const current = getActiveTheme();
+      const next = current === "dark" ? "light" : "dark";
+      setTheme(next, true);
+    });
+  }
+
+  if (window.matchMedia) {
+    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    const mqlHandler = (e) => {
+      let stored = null;
+      try { stored = localStorage.getItem(THEME_KEY); } catch (err) {}
+      if (!stored) {
+        setTheme(e.matches ? "dark" : "light", false);
+      }
+    };
+    if (mql.addEventListener) mql.addEventListener("change", mqlHandler);
+    else if (mql.addListener) mql.addListener(mqlHandler);
+  }
 
   render();
 })();
